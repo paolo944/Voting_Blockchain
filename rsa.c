@@ -92,16 +92,15 @@ long random_prime_number(int low_size, int up_size, int k){
 }
 
 long extended_gcd(long s, long t, long *u, long *v){
-    if (t == 0){
-        *u = 1;
-        *v = 0;
-        return s;
+    if (s == 0){
+        *u = 0;
+        *v = 1;
+        return t;
     }
     long uPrim, vPrim;
-    long gcd = extended_gcd(t, s % t , &uPrim, &vPrim);
-    *u = vPrim;
-    *v = uPrim-(s/t)*vPrim;
-    return gcd;
+    long gcd = extended_gcd(t%s, s , &uPrim, &vPrim);
+    *u = vPrim-(t/s)*uPrim;
+    *v = uPrim;
 }
 
 void generate_key_values(long p, long q, long *n, long *s,long *u){
