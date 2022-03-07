@@ -1,5 +1,4 @@
 #include "encryption.h"
-#include "rsa.h"
 
 long *encrypt(char *chaine, long s, long n){
     long *chaine_encrypt = (long*)malloc(strlen(chaine)*sizeof(long));
