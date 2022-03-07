@@ -28,7 +28,7 @@ int main(){
     }
     printf("cle publique = (%lx , %lx ) \n",s,n);
     printf("cle privee = (%lx , %lx) \n",u,n);
-    char message[1000] = "Hello";
+    char message[1000] = "la grosse bite de Philippe";
     int len = strlen(message);
 
     //Chiffrement :
@@ -41,6 +41,8 @@ int main(){
     //Dechiffrement
     char *decoded = decrypt(crypted, len, u, n);
     printf("Decoded: %s\n", decoded); 
+    free(crypted);
+    free(decoded);
 
     return 0;
 }

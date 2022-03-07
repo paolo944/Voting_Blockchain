@@ -15,7 +15,7 @@ char *decrypt(long *crypted, int size, long u, long n){
     char *chaine_decrypt = (char*)malloc((size+1)*sizeof(char));
     int i=0;
     while(i<size){
-        chaine_decrypt[i] = (char)modpow(*(crypted+i), u, n);
+        chaine_decrypt[i] = (char)modpow(crypted[i], u, n);
         i++;
     }
     chaine_decrypt[i] = '\0';

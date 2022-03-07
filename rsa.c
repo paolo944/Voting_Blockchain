@@ -13,17 +13,17 @@ long modpow_naive(long a, long m, long n){
 }
 
 long modpow(long a, long m, long n){
-    long temp = 0;
+    long b = 0;
     if(m == 0){
-        return 1;
+        return a%n;
     }
-    if(m%2 == 0){
-        temp = modpow(a, m/2, n);
-        return temp*a%n;
+    else if(m%2 == 0){
+        b = modpow(a, m/2, n);
+        return (b*b)%n;
     }
     else{
-        temp = modpow(a, m-1, n);
-        return temp*a%n;
+        b = modpow(a, (int)(m/2), n);
+        return (a*b*b)%n;
     }
 }
 
@@ -101,6 +101,7 @@ long extended_gcd(long s, long t, long *u, long *v){
     long gcd = extended_gcd(t%s, s , &uPrim, &vPrim);
     *u = vPrim-(t/s)*uPrim;
     *v = uPrim;
+    return gcd;
 }
 
 void generate_key_values(long p, long q, long *n, long *s,long *u){
@@ -112,5 +113,5 @@ void generate_key_values(long p, long q, long *n, long *s,long *u){
         *s = rand_long(1, t);
         gcd = extended_gcd(*s, t, u, &v);
     }
-    while((gcd != 1) && ((*u) < 0));
+    while((gcd != 1));
 }
