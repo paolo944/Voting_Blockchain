@@ -25,14 +25,16 @@ void init_key(Key* key, long val, long n){
 }
 
 void init_pair_keys(Key* pkey, Key* skey, long low_size, long up_size){
-    long p = random_prime_number(15, 16, 5000);
-    long q = random_prime_number(15, 16, 5000);
+    long p = random_prime_number(low_size, up_size, 5000);
+    long q = random_prime_number(low_size, up_size, 5000);
     while(p==q){
-        q = random_prime_number(3,7, 5000);
+        printf("coucou\n");
+        q = random_prime_number(5,7, 5000);
     }
     long n, s, u;
     generate_key_values(p, q, &n, &s, &u);
     if (u<0){
+        printf("ici aussi\n");
         long t = (p-1)*(q-1);
         u = u+t;
     }
@@ -181,7 +183,7 @@ void print_long_vector(long *result, int size){
     printf ("]\n");
 }
 
-int main ()
+/*int main ()
 {
     srand(time(NULL));
 
@@ -216,5 +218,58 @@ int main ()
     char * decoded = decrypt (crypted, len, u, n);
     printf ("Decoded : %s \n", decoded) ;
 
+    return 0;
+}*/
+int main(void){
+    srand(time(NULL));
+
+    //Testing Init Keys
+    Key *pKey = malloc(sizeof(Key));
+    Key *sKey = malloc(sizeof(Key));
+    printf("ici wsh\n");
+    init_pair_keys(pKey, sKey, 3, 7);
+    printf("pKey: %lx, %lx \n", pKey->val, pKey->n);
+    printf("sKey: %lx, %lx \n", sKey->val, sKey->n);
+
+    //Testing Key Serialization
+    char *chaine = key_to_str(pKey);
+    printf("key_to_str: %s \n", chaine);
+    Key *k = str_to_key(chaine);
+    printf("str_to_key: %lx, %lx \n", k->val, k->n);
+
+    //Testing signature
+    //Cadidate keys
+    Key *pKeyC = malloc(sizeof(Key));
+    Key *sKeyC = malloc(sizeof(Key));
+    init_pair_keys(pKeyC, sKeyC, 7, 9);
+    //Declaration:
+    char *mess = key_to_str(pKeyC);
+    printf("%s vote pour %s\n", key_to_str(pKey), mess);
+    Signature *sgn = sign(mess, sKey);
+    printf("signature: ");
+    print_long_vector(sgn->tab, sgn->taille);
+    chaine = signature_to_str(sgn);
+    printf("signature_to_str: %s \n", chaine);
+    sgn = str_to_signature(chaine);
+    printf("str_to_signature: ");
+    print_long_vector(sgn->tab, sgn->taille);
+
+    //Testing protected:
+    Protected *pr = init_protected(pKey, mess, sgn);
+    //Verification:
+    if(verify(pr)){
+        printf("Signature valide\n");
+    }
+    else{
+        printf("Signature non valide\n");
+    }
+    chaine = protected_to_str(pr);
+    printf("protected_to_str: %s\n", chaine);
+    pr = str_to_protected(chaine);
+    printf("str_to_protected: %s %s %s\n", key_to_str(pr->pKey), pr->mess, signature_to_str(pr->sign));
+    free(pKey);
+    free(sKey);
+    free(pKeyC);
+    free(sKeyC);
     return 0;
 }
