@@ -13,6 +13,12 @@ typedef struct _signature{
     int taille;
 }Signature;
 
+typedef struct _protected{
+    Key *pKey;
+    char *mess;
+    Signature *sign;
+}Protected;
+
 void init_key(Key* key, long val, long n){
     key->val = val;
     key->n = n;
@@ -128,6 +134,45 @@ Signature *str_to_signature(char *str){
     return init_signature(content , num);
 }
 
+Protected *init_protected(Key *pKey, char *mess, Signature *sign){
+    Protected *prot = (Protected*)malloc(sizeof(Protected));
+    prot->pKey = pKey;
+    prot->mess = mess;
+    prot->sign = sign;
+    return prot;
+}
+
+int verify(Protected *pr){
+    char *decoded = decrypt(pr->sign->tab, pr->sign->taille, pr->pKey->val, pr->pKey->n);
+    return (strcmp(decoded, pr->mess) == 0);
+}
+
+char *protected_to_str(Protected *pr){
+    char *chaine = malloc(256*sizeof(char));
+    if(!chaine){
+        printf("Erreur pendant l'allocation\n");
+        return NULL;
+    }
+    if(sprintf(chaine, "%s, %s, %s", key_to_str(pr->pKey), pr->mess, signature_to_str(pr->sign)) != 3){
+        printf("Problème pendant le formatage\n");
+        return NULL;
+    }
+    return chaine;
+}
+
+Protected *str_to_protected(char *chaine){
+    char *pKey_str = (char*)malloc(256*sizeof(char));
+    char *mess = (char*)malloc(256*sizeof(char));
+    char *sign_str = (char*)malloc(256*sizeof(char));
+    if(sscanf(chaine, "%s, %s, %s", pKey_str, mess, sign_str) != 3){
+        printf("Erreur pendant le formatage\n");
+        return NULL;
+    }
+    Key *pKey = str_to_key(pKey_str);
+    Signature *sign = str_to_signature(sign_str);
+    return init_protected(pKey, mess, sign);
+}
+
 void print_long_vector(long *result, int size){
     printf ("Vector: [");
     for(int i=0; i < size; i++){
@@ -141,8 +186,8 @@ int main ()
     srand(time(NULL));
 
     //Generation de cle :
-    long p = random_prime_number(5, 9, 5000);
-    long q = random_prime_number (5, 9, 5000);
+    long p = random_prime_number(3, 7, 5000);
+    long q = random_prime_number (3, 7, 5000);
     while(p == q) {
         q = random_prime_number (3, 7, 5000);
     }

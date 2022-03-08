@@ -82,9 +82,7 @@ long random_prime_number(int low_size, int up_size, int k){
         int temp = low_size;
         low_size = up_size;
         up_size = temp;
-        return random_prime_number(low_size, up_size, k);
     }
-    srand(time(NULL));
     long s;
     do{
         s = rand_long(pow(2, low_size), pow(2, up_size+1)-1);
