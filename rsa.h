@@ -1,6 +1,7 @@
 #include <stdlib.h>
-#include <math.h>
+#include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 #ifndef RSA_H
 #define RSA_H

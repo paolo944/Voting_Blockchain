@@ -2,7 +2,7 @@
 
 long *encrypt(char *chaine, long s, long n){
     long *chaine_encrypt = (long*)malloc(strlen(chaine)*sizeof(long));
-    if(chaine_encrypt){
+    if(!chaine_encrypt){
         printf("Erreur d'allocation\n");
         return NULL;
     }  

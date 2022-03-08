@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <stdio.h>
 #include "rsa.h"
 
 long modpow_naive(long a, long m, long n){
@@ -81,13 +77,19 @@ int is_prime_miller(long p, int k){
 }
 
 long random_prime_number(int low_size, int up_size, int k){
+    if (low_size > up_size){
+        printf("Probleme de borne : borne inferieure > borne superieure.\nInversion des bornes.\n");
+        int temp = low_size;
+        low_size = up_size;
+        up_size = temp;
+        return random_prime_number(low_size, up_size, k);
+    }
     srand(time(NULL));
     long s;
     do{
         s = rand_long(pow(2, low_size), pow(2, up_size+1)-1);
-        //printf("s: %ld\n", s);
     }
-    while(!is_prime_miller(s, k));
+    while(is_prime_miller(s, k) != 1);
     return s;
 }
 
@@ -110,7 +112,7 @@ void generate_key_values(long p, long q, long *n, long *s,long *u){
     long v = 0;
     long gcd;
     do{
-        *s = rand_long(1, t);
+        *s = rand_long(0, t);
         gcd = extended_gcd(*s, t, u, &v);
     }
     while((gcd != 1));

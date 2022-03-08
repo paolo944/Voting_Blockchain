@@ -83,15 +83,7 @@ Signature *init_signature(long *content, int size){
 }
 
 Signature* sign(char* mess, Key* sKey){
-    int taille = strlen(mess);
-    long *content = (long*)malloc(taille*sizeof(long));
-    if(!content){
-        printf("Erreur pendant l'allocation\n");
-        return NULL;
-    }
-    content = encrypt(mess, sKey->val, sKey->n);
-    Signature *sign = init_signature(content, taille);
-    return sign;
+    return init_signature(encrypt(mess, sKey->val, sKey->n), strlen(mess));
 }
 
 char *signature_to_str(Signature * sgn){
@@ -137,45 +129,47 @@ Signature *str_to_signature(char *str){
 }
 
 void print_long_vector(long *result, int size){
-    printf("Vector: [");
-    for(int i=0; i<size; i++){
-        printf("%lx \t", result[i]);
+    printf ("Vector: [");
+    for(int i=0; i < size; i++){
+        printf("%lx \t" , result[i]);
     }
-    printf("]\n");
+    printf ("]\n");
 }
 
-int main(){
+int main ()
+{
     srand(time(NULL));
 
     //Generation de cle :
-    long p = random_prime_number(15, 16, 5000);
-    long q = random_prime_number(15, 16, 5000);
-    while(p==q){
-        q = random_prime_number(3,7, 5000);
+    long p = random_prime_number(5, 9, 5000);
+    long q = random_prime_number (5, 9, 5000);
+    while(p == q) {
+        q = random_prime_number (3, 7, 5000);
     }
-    long n, s, u;
-    generate_key_values(p, q, &n, &s, &u);
-    if (u<0){
-        long t = (p-1)*(q-1);
-        u = u+t;
+    long n , s , u ;
+    generate_key_values (p, q, &n, &s, &u);
+    //Pour avoir des cles positives :
+    if(u < 0){
+        long t = (p - 1) * ( q - 1);
+        u = u + t; //on aura toujours s*u mod t = 1
     }
-    printf("cle publique = (%lx , %lx ) \n",s,n);
-    printf("cle privee = (%lx , %lx) \n",u,n);
-    char message[1000] = "la grosse bite de Philippe";
-    int len = strlen(message);
 
-    //Chiffrement :
-    long *crypted = encrypt(message, s, n);
+    //Afichage des cles en hexadecimal
+    printf("cle publique = (%lx, %lx) \n", s, n);
+    printf("cle privee = (%lx, %lx) \n", u , n);
 
-    printf("Initial message, %s \n", message);
-    printf("Encoded representation : \n");
+    //Chiffrement:
+    char mess[10] = "Hello";
+    int len = strlen(mess);
+    long * crypted = encrypt(mess, s, n);
+
+    printf("Initial message: %s \n", mess);
+    printf("Encoded representation: \n");
     print_long_vector(crypted, len);
-    
+
     //Dechiffrement
-    char *decoded = decrypt(crypted, len, u, n);
-    printf("Decoded: %s\n", decoded); 
-    free(crypted);
-    free(decoded);
+    char * decoded = decrypt (crypted, len, u, n);
+    printf ("Decoded : %s \n", decoded) ;
 
     return 0;
 }
