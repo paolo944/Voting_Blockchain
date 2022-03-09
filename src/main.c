@@ -55,13 +55,15 @@ void afficher_tab(int *tab, int len){
     }
 }
 
-void vote(Key *sKey, Key *pKey, Key *candidat){
-    
+Signature *vote(Key *sKey, Key *candidat){
+    Signature *signature = sign(key_to_str(candidat), sKey);
+    return signature;
 }
 
 void generate_random_data(int nv, int nc){
 	FILE *file = fopen("keys.txt", "w+");
     FILE *fileC = fopen("candidates.txt", "w+");
+    FILE *fileV = fopen("declarations.txt", "w");
 	if(!file){
 		printf("Erreur pendant l'ouverture du fichier\n");
 	}
@@ -75,13 +77,21 @@ void generate_random_data(int nv, int nc){
 			Key *pKey = malloc(sizeof(Key));
     		Key *sKey = malloc(sizeof(Key));
     		init_pair_keys(pKey, sKey, 3, 7);
-    		fprintf(file, "%s,%s", key_to_str(pKey), key_to_str(sKey));
+    		fprintf(file, "%s , %s", key_to_str(pKey), key_to_str(sKey));
     		fputc('\n', file);
 		}
 		free(pKey);
 		free(sKey);
 		int ligne[nc];
         int x;
+        int j = 0;
+        char buffer[256];
+        char key1[256];
+        char key2[256];
+        Key *sKeyV;
+        Key *pKeyV;
+        Key *pKeyC;
+        Signature *signature;
 		for(int i=0; i<nc; i++){
             do{
                 x = rand()%nv;
@@ -90,10 +100,7 @@ void generate_random_data(int nv, int nc){
 			ligne[i] = x;
 		}
         tri_rapide(ligne, 0, nc);
-        afficher_tab(ligne, nc);
         rewind(file);
-        int j = 0;
-        char buffer[256];
         for(int i=1; i<=nv; i++){
             if(j == nc){
                 break;
@@ -108,9 +115,34 @@ void generate_random_data(int nv, int nc){
                 printf("erreur de lecture\n");
             }
         }
+        rewind(file);
+        for(int i=0; i<nv; i++){
+            rewind(fileC);
+            x = rand()%nc;
+            if(sscanf(buffer, "%s , %s", key1, key2) == 2){
+                pKeyV = str_to_key(key1);
+                sKeyV = str_to_key(key2);
+            }
+            else{
+                printf("erreur de formatage\n");
+            }
+            for(j=0; j<x; j++){
+                fgets(buffer, 256, fileC);
+            }
+            if(sscanf(buffer, "%s , %s", key1, key2) == 2){
+                pKeyC = str_to_key(key1);
+            }
+            else{
+                printf("erreur de formatage\n");
+            }
+            signature = vote(sKeyV, pKeyC);
+            fprintf(fileV, "%s", signature_to_str(signature));
+            fputc('\n', fileV);
+        }
 	}
 	fclose(file);
     fclose(fileC);
+    fclose(fileV);
 }
 
 /*int main ()
