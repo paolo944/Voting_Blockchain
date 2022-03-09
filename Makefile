@@ -23,4 +23,4 @@ key.o: src/lib/key.c src/lib/headers/rsa.h
 
 clean :
 	rm bin/*.o
-	rm src/main
+	rm main

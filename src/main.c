@@ -14,9 +14,58 @@ void print_long_vector(long *result, int size){
     printf ("]\n");
 }
 
+int present(int *tab, int len, int x){
+    for(int i=0; i<len; i++){
+        if(tab[i] == x) return 1;
+    }
+    return 0;
+}
+
+void swap(int *t, int i, int j){
+    int tmp = t[i];
+    t[i] = t[j];
+    t[j] = tmp;
+}
+
+int tri_rapide_separation(int *t, int deb, int fin){
+    int i, sep = deb+1;
+    for(i=deb+1; i<=fin; i++){
+        if(t[i] < t[deb]){
+            if(i != sep) swap(t, i, sep);
+            sep++;
+        }
+    }
+    if(sep != deb+1){
+        swap(t, deb, sep-1);
+    }
+    return sep-1;
+}
+
+void tri_rapide(int *t, int deb, int fin){
+    if(deb<fin){
+        int milieu = tri_rapide_separation(t, deb, fin);
+        tri_rapide(t, deb, milieu);
+        tri_rapide(t, milieu+1, fin);
+    }
+}
+
+void afficher_tab(int *tab, int len){
+    for(int i=0; i<len; i++){
+        printf("tab[%d] = %d\n", i, tab[i]);
+    }
+}
+
+void vote(Key *sKey, Key *pKey, Key *candidat){
+    
+}
+
 void generate_random_data(int nv, int nc){
-	FILE *file = fopen("keys.txt", "w");
+	FILE *file = fopen("keys.txt", "w+");
+    FILE *fileC = fopen("candidates.txt", "w+");
 	if(!file){
+		printf("Erreur pendant l'ouverture du fichier\n");
+	}
+    if(!fileC){
 		printf("Erreur pendant l'ouverture du fichier\n");
 	}
 	else{
@@ -32,11 +81,36 @@ void generate_random_data(int nv, int nc){
 		free(pKey);
 		free(sKey);
 		int ligne[nc];
+        int x;
 		for(int i=0; i<nc; i++){
-			ligne[i] = rand()%nc;
+            do{
+                x = rand()%nv;
+            }
+            while(present(ligne, i+1, x));
+			ligne[i] = x;
 		}
+        tri_rapide(ligne, 0, nc);
+        afficher_tab(ligne, nc);
+        rewind(file);
+        int j = 0;
+        char buffer[256];
+        for(int i=1; i<=nv; i++){
+            if(j == nc){
+                break;
+            }
+            if(fgets(buffer, 256, file)){
+                if(i == ligne[j]){
+                    fprintf(fileC, "%s", buffer);
+                    j++;
+                }
+            }
+            else{
+                printf("erreur de lecture\n");
+            }
+        }
 	}
 	fclose(file);
+    fclose(fileC);
 }
 
 /*int main ()
@@ -135,6 +209,6 @@ int main(void){
 	free(pr->sign);
 	free(pr->mess);
 	free(pr);
-	generate_random_data(100, 0);
+	generate_random_data(100, 10);
     return 0;
 }
