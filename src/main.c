@@ -66,10 +66,12 @@ void generate_random_data(int nv, int nc){
     FILE *fileV = fopen("declarations.txt", "w");
 	if(!file){
 		printf("Erreur pendant l'ouverture du fichier\n");
+        return;
 	}
     if(!fileC){
 		printf("Erreur pendant l'ouverture du fichier\n");
-	}
+        return;
+    }
 	else{
 		Key *pKey = malloc(sizeof(Key));
     	Key *sKey = malloc(sizeof(Key));
@@ -119,12 +121,18 @@ void generate_random_data(int nv, int nc){
         for(int i=0; i<nv; i++){
             rewind(fileC);
             x = rand()%nc;
-            if(sscanf(buffer, "%s , %s", key1, key2) == 2){
-                pKeyV = str_to_key(key1);
-                sKeyV = str_to_key(key2);
+            if(fgets(buffer, 256, file)){
+                if(sscanf(buffer, "%s , %s", key1, key2) == 2){
+                    pKeyV = str_to_key(key1);
+                    sKeyV = str_to_key(key2);
+                }
+                else{
+                    printf("erreur de formatage\n");
+                    return;
+                }
             }
             else{
-                printf("erreur de formatage\n");
+                return;
             }
             for(j=0; j<x; j++){
                 fgets(buffer, 256, fileC);
@@ -136,9 +144,14 @@ void generate_random_data(int nv, int nc){
                 printf("erreur de formatage\n");
             }
             signature = vote(sKeyV, pKeyC);
-            fprintf(fileV, "%s", signature_to_str(signature));
+            fprintf(fileV, "%s | %s | %s", signature_to_str(signature), key_to_str(sKeyV), key_to_str(pKeyC));
             fputc('\n', fileV);
         }
+        free(sKeyV);
+        free(pKeyV);
+        free(pKeyC);
+        free(signature->tab);
+        free(signature);
 	}
 	fclose(file);
     fclose(fileC);
