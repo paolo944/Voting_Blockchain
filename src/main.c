@@ -5,6 +5,7 @@
 #include "lib/headers/key.h"
 #include "lib/headers/signature.h"
 #include "lib/headers/protected.h"
+#include "lib/headers/listes.h"
 
 void print_long_vector(long *result, int size){
     printf ("Vector: [");
@@ -255,5 +256,7 @@ int main(void){
 	free(pr->mess);
 	free(pr);
 	generate_random_data(100, 10);
+    CellKey **liste = read_public_keys("keys.txt");
+    print_list_keys(*liste);
     return 0;
 }
