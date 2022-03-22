@@ -1,4 +1,4 @@
-#include "headers/listes.h"
+#include "headers/cellKey.h"
 
 CellKey *create_cell_key(Key *key){
     CellKey *cell = (CellKey*)malloc(sizeof(CellKey));
@@ -13,24 +13,25 @@ CellKey *create_cell_key(Key *key){
 }
 
 void ajout_en_tete(CellKey *key, CellKey **liste){
-    if(!key){
+    if(*liste == NULL){
+        *liste = key;
         return;
     }
-    if(liste == NULL){
-        liste = &key;
-    }
     key->next = *liste;
-    liste = &key;
+    *liste = key;
 }
 
-CellKey **read_public_keys(char *nomFic){
+CellKey *read_public_keys(char *nomFic){
     FILE *file = fopen(nomFic, "r");
+    if(!file){
+        return NULL;
+    }
     char buffer[256];
-    Key *key;
-    CellKey **liste = NULL;
+    Key *key = NULL;
+    CellKey *liste = NULL;
     while(fgets(buffer, 256, file)){
         key = str_to_key(buffer);
-        ajout_en_tete(create_cell_key(key), liste);
+        ajout_en_tete(create_cell_key(key), &liste);
     }
     return liste;
 }
@@ -38,13 +39,22 @@ CellKey **read_public_keys(char *nomFic){
 void print_list_keys(CellKey *LCK){
     CellKey *tmp = LCK;
     while(tmp){
-        printf("ici\n");
         printf("%s\n", key_to_str(tmp->data));
-        printf("%s\n", key_to_str(tmp->next->data));
         tmp = tmp->next;
     }
 }
 
 void delete_cell_key(CellKey *c){
+    free(c->data);
+    free(c);
+}
 
+void delete_liste_key(CellKey *c){
+    CellKey *tmp = NULL;
+    while(c){
+        tmp = c->next;
+        delete_cell_key(c);
+        c = tmp;
+    }
+    free(c);
 }

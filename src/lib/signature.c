@@ -61,3 +61,8 @@ Signature *str_to_signature(char *str){
     content = realloc(content , num*sizeof(long));
     return init_signature(content , num);
 }
+
+void delete_signature(Signature *sign){
+    free(sign->tab);
+    free(sign);
+}

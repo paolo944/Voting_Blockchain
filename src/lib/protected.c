@@ -36,3 +36,10 @@ Protected *str_to_protected(char *chaine){
     Signature *sign = str_to_signature(sign_str);
     return init_protected(pKey, mess, sign);
 }
+
+void delete_protected(Protected *p){
+    free(p->pKey);
+    free(p->mess);
+    delete_signature(p->sign);
+    free(p);
+}

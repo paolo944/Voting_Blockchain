@@ -5,7 +5,8 @@
 #include "lib/headers/key.h"
 #include "lib/headers/signature.h"
 #include "lib/headers/protected.h"
-#include "lib/headers/listes.h"
+#include "lib/headers/cellKey.h"
+#include "lib/headers/cellProtected.h"
 
 void print_long_vector(long *result, int size){
     printf ("Vector: [");
@@ -119,6 +120,7 @@ void generate_random_data(int nv, int nc){
             }
         }
         rewind(file);
+        Protected *pr;
         for(int i=0; i<nv; i++){
             rewind(fileC);
             x = rand()%nc;
@@ -145,7 +147,8 @@ void generate_random_data(int nv, int nc){
                 printf("erreur de formatage\n");
             }
             signature = vote(sKeyV, pKeyC);
-            fprintf(fileV, "%s | %s | %s", signature_to_str(signature), key_to_str(sKeyV), key_to_str(pKeyC));
+            pr = init_protected(pKeyV, key_to_str(pKeyC), signature);
+            fprintf(fileV, "%s", protected_to_str(pr));
             fputc('\n', fileV);
         }
         free(sKeyV);
@@ -256,7 +259,11 @@ int main(void){
 	free(pr->mess);
 	free(pr);
 	generate_random_data(100, 10);
-    CellKey **liste = read_public_keys("keys.txt");
-    print_list_keys(*liste);
+    CellKey *liste = read_public_keys("keys.txt");
+    print_list_keys(liste);
+    CellProtected *liste2 = read_protected("declarations.txt");
+    afficher_cell_protected(liste2);
+    delete_liste_key(liste);
+    delete_liste_protected(liste2);
     return 0;
 }
