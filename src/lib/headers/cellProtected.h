@@ -14,5 +14,6 @@ CellProtected *read_protected(char *nomfic);
 void afficher_cell_protected(CellProtected *liste);
 void delete_cell_protected(CellProtected *c);
 void delete_liste_protected(CellProtected *c);
+void verification_fraude(CellProtected **liste);
 
 #endif //PROTECTED_H

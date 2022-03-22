@@ -263,6 +263,7 @@ int main(void){
     print_list_keys(liste);
     CellProtected *liste2 = read_protected("declarations.txt");
     afficher_cell_protected(liste2);
+    verification_fraude(&liste2);
     delete_liste_key(liste);
     delete_liste_protected(liste2);
     return 0;

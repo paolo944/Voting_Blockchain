@@ -53,3 +53,21 @@ void delete_liste_protected(CellProtected *c){
     }
     free(c);
 }
+
+void verification_fraude(CellProtected **liste){
+    CellProtected *c = *liste;
+    CellProtected *tmp = NULL;
+    while(c->next){
+        if(!verify(c->next->data)){
+            tmp = c->next;
+            c->next = c->next->next;
+            delete_cell_protected(tmp);
+        }
+        c = c->next;
+    }
+    if(!verify((*liste)->data)){
+        tmp = *liste;
+        liste = &((*liste)->next);
+        delete_cell_protected(tmp);
+    }
+}
