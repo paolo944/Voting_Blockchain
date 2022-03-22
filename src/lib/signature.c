@@ -22,6 +22,10 @@ Signature* sign(char* mess, Key* sKey){
 
 char *signature_to_str(Signature * sgn){
     char * result = malloc (10*sgn->taille*sizeof(char));
+    if(!result){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     result[0]= '#' ;
     int pos = 1;
     char buffer[156];
@@ -41,7 +45,11 @@ char *signature_to_str(Signature * sgn){
 
 Signature *str_to_signature(char *str){
     int len = strlen(str);
-    long *content = (long*)malloc(sizeof(long)*len) ;
+    long *content = (long*)malloc(sizeof(long)*len);
+    if(!content){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     int num = 0;
     char buffer [256];
     int pos = 0;

@@ -74,12 +74,22 @@ void generate_random_data(int nv, int nc){
 		printf("Erreur pendant l'ouverture du fichier\n");
         return;
     }
+    if(!fileV){
+		printf("Erreur pendant l'ouverture du fichier\n");
+        return;
+    }
 	else{
 		Key *pKey = malloc(sizeof(Key));
+        if(!pKey){
+            printf("Erreur d'allocation\n");
+            return;
+        }
     	Key *sKey = malloc(sizeof(Key));
+        if(!sKey){
+            printf("Erreur d'allocation\n");
+            return;
+        }
 		for(int i=0; i<nv; i++){
-			Key *pKey = malloc(sizeof(Key));
-    		Key *sKey = malloc(sizeof(Key));
     		init_pair_keys(pKey, sKey, 3, 7);
     		fprintf(file, "%s , %s", key_to_str(pKey), key_to_str(sKey));
     		fputc('\n', file);
@@ -204,7 +214,15 @@ int main(void){
 
     //Testing Init Keys
     Key *pKey = malloc(sizeof(Key));
+    if(!pKey){
+        printf("Erreur d'allocation\n");
+        return;
+    }
     Key *sKey = malloc(sizeof(Key));
+    if(!pKey){
+        printf("Erreur d'allocation\n");
+        return;
+    }
     init_pair_keys(pKey, sKey, 3, 7);
     printf("pKey: %lx, %lx \n", pKey->val, pKey->n);
     printf("sKey: %lx, %lx \n", sKey->val, sKey->n);
@@ -219,7 +237,15 @@ int main(void){
     //Testing signature
     //Cadidate keys
     Key *pKeyC = malloc(sizeof(Key));
+    if(!pKeyC){
+        printf("Erreur d'allocation\n");
+        return;
+    }
     Key *sKeyC = malloc(sizeof(Key));
+    if(!sKeyC){
+        printf("Erreur d'allocation\n");
+        return;
+    }
     init_pair_keys(pKeyC, sKeyC, 7, 9);
     //Declaration:
     char *mess = key_to_str(pKeyC);

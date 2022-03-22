@@ -2,6 +2,10 @@
 
 CellProtected *create_cell_protected(Protected *pr){
     CellProtected *c = (CellProtected*)malloc(sizeof(CellProtected));
+    if(!c){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     c->data = pr;
     c->next = NULL;
     return c;

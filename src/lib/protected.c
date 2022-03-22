@@ -2,6 +2,10 @@
 
 Protected *init_protected(Key *pKey, char *mess, Signature *sign){
     Protected *prot = (Protected*)malloc(sizeof(Protected));
+    if(!prot){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     prot->pKey = pKey;
     prot->mess = mess;
     prot->sign = sign;
@@ -25,8 +29,20 @@ char *protected_to_str(Protected *pr){
 
 Protected *str_to_protected(char *chaine){
     char *pKey_str = (char*)malloc(256*sizeof(char));
+    if(!pKey_str){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     char *mess = (char*)malloc(256*sizeof(char));
+    if(!mess){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     char *sign_str = (char*)malloc(256*sizeof(char));
+    if(!sign_str){
+        printf("Erreur d'allocation\n");
+        return NULL;
+    }
     if(sscanf(chaine, "%s , %s , %s", pKey_str, mess, sign_str) != 3){
 		printf("%s\n", pKey_str);
         printf("Erreur pendant le formatage\n");
