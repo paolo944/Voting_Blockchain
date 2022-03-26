@@ -1,6 +1,9 @@
 #include "headers/encryption.h"
 
 long *encrypt(char *chaine, long s, long n){
+    //paramètres: 
+    //
+    //valeur de retour
     long *chaine_encrypt = (long*)malloc(strlen(chaine)*sizeof(long));
     if(!chaine_encrypt){
         printf("Erreur d'allocation\n");
@@ -15,6 +18,9 @@ long *encrypt(char *chaine, long s, long n){
 }
 
 char *decrypt(long *crypted, int size, long u, long n){
+    //paramètres: 
+    //
+    //valeur de retour
     char *chaine_decrypt = (char*)malloc((size+1)*sizeof(char));
     if(!chaine_decrypt){
         printf("Erreur d'allocation\n");

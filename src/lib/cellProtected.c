@@ -1,6 +1,9 @@
 #include "headers/cellProtected.h"
 
 CellProtected *create_cell_protected(Protected *pr){
+    //paramètres: 
+    //
+    //valeur de retour
     CellProtected *c = (CellProtected*)malloc(sizeof(CellProtected));
     if(!c){
         printf("Erreur d'allocation\n");
@@ -12,6 +15,9 @@ CellProtected *create_cell_protected(Protected *pr){
 }
 
 void ajout_en_tete_protected(CellProtected *pr, CellProtected **liste){
+    //paramètres: 
+    //
+    //valeur de retour
     if(*liste == NULL){
         *liste = pr;
         return;
@@ -21,6 +27,9 @@ void ajout_en_tete_protected(CellProtected *pr, CellProtected **liste){
 }
 
 CellProtected *read_protected(char *nomfic){
+    //paramètres: 
+    //
+    //valeur de retour
     FILE *fic = fopen(nomfic, "r");
     if(!fic){
         return NULL;
@@ -36,6 +45,9 @@ CellProtected *read_protected(char *nomfic){
 }
 
 void afficher_cell_protected(CellProtected *liste){
+    //paramètres: 
+    //
+    //valeur de retour
     CellProtected *tmp = liste;
     while(tmp){
         printf("%s\n", protected_to_str(tmp->data));
@@ -44,11 +56,17 @@ void afficher_cell_protected(CellProtected *liste){
 }
 
 void delete_cell_protected(CellProtected *c){
+    //paramètres: 
+    //
+    //valeur de retour
     delete_protected(c->data);
     free(c);
 }
 
 void delete_liste_protected(CellProtected *c){
+    //paramètres: 
+    //
+    //valeur de retour
     CellProtected *tmp = NULL;
     while(c){
         tmp = c->next;
@@ -59,6 +77,9 @@ void delete_liste_protected(CellProtected *c){
 }
 
 void verification_fraude(CellProtected **liste){
+    //paramètres: 
+    //
+    //valeur de retour
     CellProtected *c = *liste;
     CellProtected *tmp = NULL;
     while(c->next){
