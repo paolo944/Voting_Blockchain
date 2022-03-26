@@ -1,6 +1,9 @@
 #include "headers/rsa.h"
 
 long modpow_naive(long a, long m, long n){
+    //paramètres: 
+    //
+    //valeur de retour
     long powA = a;
     for(int i=0; i<m; i++){
         powA *= a;
@@ -9,6 +12,9 @@ long modpow_naive(long a, long m, long n){
 }
 
 long modpow(long a, long m, long n){
+    //paramètres: 
+    //
+    //valeur de retour
     long b = 0;
     if(m == 0){
         return 1;
@@ -23,7 +29,7 @@ long modpow(long a, long m, long n){
     }
 }
 
-int witness(long a, long b, long d, long p){
+int witness(long a, long b, long d, long p){ //fonction fourni
     long x = modpow(a, d, p);
     if(x == 1){
         return 0;
@@ -37,11 +43,14 @@ int witness(long a, long b, long d, long p){
     return 1;
 }
 
-long rand_long(long low, long up){
+long rand_long(long low, long up){ //fonction fourni (je crois)
     return rand() % (up-low + 1)+low;
 }
 
 int is_prime_naive(long p){
+    //paramètres: 
+    //
+    //valeur de retour
     for(int i=3; i<p; i++){
         if(p%i == 0){
             return 0;
@@ -50,7 +59,7 @@ int is_prime_naive(long p){
     return 1;
 }
 
-int is_prime_miller(long p, int k){
+int is_prime_miller(long p, int k){ //fonction fourni
     if (p == 2){
         return 1;
     }
@@ -77,6 +86,9 @@ int is_prime_miller(long p, int k){
 }
 
 long random_prime_number(int low_size, int up_size, int k){
+    //paramètres: 
+    //
+    //valeur de retour
     if (low_size > up_size){
         printf("Probleme de borne : borne inferieure > borne superieure.\nInversion des bornes.\n");
         int temp = low_size;
@@ -91,7 +103,7 @@ long random_prime_number(int low_size, int up_size, int k){
 	return s;
 }
 
-long extended_gcd(long s, long t, long *u, long *v){
+long extended_gcd(long s, long t, long *u, long *v){ //fonction fourni
     if (s == 0){
         *u = 0;
         *v = 1;
@@ -105,6 +117,9 @@ long extended_gcd(long s, long t, long *u, long *v){
 }
 
 void generate_key_values(long p, long q, long *n, long *s,long *u){
+    //paramètres: 
+    //
+    //valeur de retour
     *n = p*q;
     long t = (p-1)*(q-1);
     long v = 0;

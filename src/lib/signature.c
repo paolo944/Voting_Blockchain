@@ -1,14 +1,20 @@
 #include "headers/signature.h"
 
 Signature *init_signature(long *content, int size){
-    Signature *sign = (Signature*)malloc(sizeof(Signature));
-    if(!sign){
+    //paramètres: un pointeur vers un message encrypté et sa taille
+    //intialise une signature avec le contenu encrypté et sa taille
+    //valeur de retour: une signature de type Signature
+    Signature *sign = (Signature*)malloc(sizeof(Signature)); //allocation de mémoire
+    if(!sign){ //vérification de l'allocation
         printf("Erreur pendant l'allocation\n");
+        free(sign);
         return NULL;
     }
-    sign->tab = (long*)malloc(sizeof(long));
-    if(!sign->tab){
+    sign->tab = (long*)malloc(sizeof(long)); //allocation de mémoire
+    if(!sign->tab){ //vérification de l'allocation
         printf("Erreur pendant l'allocation\n");
+        free(sign->tab);
+        free(sign);
         return NULL;
     }
     sign->tab = content;
@@ -17,13 +23,17 @@ Signature *init_signature(long *content, int size){
 }
 
 Signature* sign(char* mess, Key* sKey){
-    return init_signature(encrypt(mess, sKey->val, sKey->n), strlen(mess));
+    //paramètres: un message et une clé privée
+    //encryptage du message grâce à la clé privée donnée en paramètres
+    //valeur de retour: une signautre initialisé
+    return init_signature(encrypt(mess, sKey->val, sKey->n), strlen(mess)); //allocation de mémoire
 }
 
-char *signature_to_str(Signature * sgn){
-    char * result = malloc (10*sgn->taille*sizeof(char));
-    if(!result){
+char *signature_to_str(Signature * sgn){ //fonction fourni
+    char * result = (char*)malloc(10*sgn->taille*sizeof(char)); //allocation de mémoire
+    if(!result){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
+        free(result);
         return NULL;
     }
     result[0]= '#' ;
@@ -39,15 +49,16 @@ char *signature_to_str(Signature * sgn){
         pos = pos+1;
     }
     result[pos] = '\0' ;
-    result = realloc(result , (pos+1)*sizeof(char)) ;
+    result = realloc(result , (pos+1)*sizeof(char)); //allocation de mémoire
     return result;
 }
 
-Signature *str_to_signature(char *str){
+Signature *str_to_signature(char *str){ //fonction fourni
     int len = strlen(str);
-    long *content = (long*)malloc(sizeof(long)*len);
+    long *content = (long*)malloc(sizeof(long)*len); //allocation de mémoire
     if(!content){
         printf("Erreur d'allocation\n");
+        free(content);
         return NULL;
     }
     int num = 0;
@@ -66,11 +77,14 @@ Signature *str_to_signature(char *str){
             }
         }
     }
-    content = realloc(content , num*sizeof(long));
-    return init_signature(content , num);
+    content = realloc(content , num*sizeof(long)); //allocation de mémoire
+    return init_signature(content , num); //allocation de mémoire
 }
 
 void delete_signature(Signature *sign){
+    //paramètres: une signature sign de type Signature
+    //supprimer la signature et libération de la mémoire
+    //valeur de retour: aucune
     free(sign->tab);
     free(sign);
 }
