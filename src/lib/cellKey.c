@@ -1,6 +1,6 @@
 #include "headers/cellKey.h"
 
-CellKey *create_cell_key(Key *key){
+CellKey *create_cell_key(Key *key){         //Cr'eation d'une cellule de clé
     CellKey *cell = (CellKey*)malloc(sizeof(CellKey));
     if(!cell){
         return NULL;
@@ -12,7 +12,7 @@ CellKey *create_cell_key(Key *key){
     return cell;
 }
 
-void ajout_en_tete(CellKey *key, CellKey **liste){
+void ajout_en_tete(CellKey *key, CellKey **liste){      //Ajout d'une cl'e en tete de cellule
     if(*liste == NULL){
         *liste = key;
         return;
@@ -21,7 +21,7 @@ void ajout_en_tete(CellKey *key, CellKey **liste){
     *liste = key;
 }
 
-CellKey *read_public_keys(char *nomFic){
+CellKey *read_public_keys(char *nomFic){      //Cr'eation d'une liste de cl'e a partir d'un fichier
     FILE *file = fopen(nomFic, "r");
     if(!file){
         return NULL;
@@ -36,7 +36,7 @@ CellKey *read_public_keys(char *nomFic){
     return liste;
 }
 
-void print_list_keys(CellKey *LCK){
+void print_list_keys(CellKey *LCK){      //Affichage d'une liste de cl'e
     CellKey *tmp = LCK;
     while(tmp){
         printf("%s\n", key_to_str(tmp->data));
@@ -44,12 +44,12 @@ void print_list_keys(CellKey *LCK){
     }
 }
 
-void delete_cell_key(CellKey *c){
+void delete_cell_key(CellKey *c){       //Suppression d'une cellule de cl'e
     free(c->data);
     free(c);
 }
 
-void delete_liste_key(CellKey *c){
+void delete_liste_key(CellKey *c){       //Suppression d'une liste de cl'e
     CellKey *tmp = NULL;
     while(c){
         tmp = c->next;
