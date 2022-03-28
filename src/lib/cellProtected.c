@@ -50,8 +50,11 @@ void afficher_cell_protected(CellProtected *liste){
     //affiche toutes les cellules de la liste
     //valeur de retour: aucune
     CellProtected *tmp = liste; //tampon pour manipuler la liste
-    while(tmp){ //tant que toute la liste n'est pas parcourue entièrement
-        printf("%s\n", protected_to_str(tmp->data)); //affichage de la cellule actuelle
+    char *chaine;
+	while(tmp){ //tant que toute la liste n'est pas parcourue entièrement
+        chaine = protected_to_str(tmp->data);
+        printf("%s\n", chaine); //affichage de la cellule actuelle
+        free(chaine);
         tmp = tmp->next;
     }
 }
@@ -86,7 +89,12 @@ void verification_fraude(CellProtected **liste){
     while(c->next){ //tant que toute la liste n'est pas parcourue
         if(!verify(c->next->data)){ //si la signature n'est pas celle du votant
             tmp = c->next;
-            c->next = c->next->next; //le parcourscontinue
+            if(c->next->next){
+                c->next = c->next->next; //le parcourscontinue
+            }
+            else{
+                c->next = NULL;
+            }
             delete_cell_protected(tmp); //supprimer la cellule qui n'est pas correcte
         }
         c = c->next;

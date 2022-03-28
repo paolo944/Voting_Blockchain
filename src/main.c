@@ -21,13 +21,22 @@ int present(int *tab, int len, int x){
     //recherche si x est présent dans un tableau non trié
     //Retourne 1 si est présent et 0 sinon.
     for(int i=0; i<len; i++){
-        if(tab[i] == x) return 1;
+        if(tab[i] == x){
+			return 1;
+		}
     }
     return 0;
 }
 
+void remplir(int *tab, int len){
+	for(int i=0; i<len; i++){
+		tab[i] = -1;
+	}
+}
+
+/*
 void interclasser(int *t, int p, int m, int g){
-    int tmp[100]; 
+    int tmp[p-g+1]; 
     int i, j, k;
     for(i=p; i<=g; i++) tmp[i]=t[i];
 
@@ -56,6 +65,71 @@ void tri_fusion(int *t, int deb, int fin){
         tri_fusion(t, milieu+1, fin);
         interclasser(t, deb, milieu, fin);
     }
+}
+*/
+
+void merge(int arr[], int p, int q, int r) {
+
+  // Create L ← A[p..q] and M ← A[q+1..r]
+  int n1 = q - p + 1;
+  int n2 = r - q;
+
+  int L[n1], M[n2];
+  remplir(L, n1);
+  remplir(M, n2);
+
+  for (int i = 0; i < n1; i++)
+    L[i] = arr[p + i];
+  for (int j = 0; j < n2; j++)
+    M[j] = arr[q + 1 + j];
+
+  // Maintain current index of sub-arrays and main array
+  int i, j, k;
+  i = 0;
+  j = 0;
+  k = p;
+
+  // Until we reach either end of either L or M, pick larger among
+  // elements L and M and place them in the correct position at A[p..r]
+  while (i < n1 && j < n2) {
+    if (L[i] <= M[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = M[j];
+      j++;
+    }
+    k++;
+  }
+
+  // When we run out of elements in either L or M,
+  // pick up the remaining elements and put in A[p..r]
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    arr[k] = M[j];
+    j++;
+    k++;
+  }
+}
+
+// Divide the array into two subarrays, sort them and merge them
+void mergeSort(int arr[], int l, int r) {
+  if (l < r) {
+
+    // m is the point where the array is divided into two subarrays
+    int m = l + (r - l) / 2;
+
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+
+    // Merge the sorted subarrays
+    merge(arr, l, m, r);
+  }
 }
 
 void afficher_tab(int *tab, int len){
@@ -114,12 +188,13 @@ void generate_random_data(int nv, int nc){
             char*sKeyStr = key_to_str(sKey); //allocation de la mémoire à chaque tour de boucle (libéré)
     		fprintf(file, "%s , %s", pKeyStr, sKeyStr); //écriture dans le fichier
     		fputc('\n', file); //saut de ligne dans le fichier
-            //free(pKeyStr); //Libération de la mémoire
-            //free(sKeyStr); //Libération de la mémoire
-            //free(pKey); //Libération de la mémoire
-		    //free(sKey); //Libération de la mémoire
+            free(pKeyStr); //Libération de la mémoire
+            free(sKeyStr); //Libération de la mémoire
 		}
+		free(pKey); //Libération de la mémoire
+		free(sKey); //Libération de la mémoire
 		int ligne[nc]; //tableau de statique contenant les lignes des candidats dans le fichier des votants
+		remplir(ligne, nc);
         int x; //variable qui contiendra la nombre aléatoire
         char buffer[256]; //buffer pour le lecture
         char key1[256]; //chaîne de caractère qui contiendra la première clé
@@ -135,7 +210,7 @@ void generate_random_data(int nv, int nc){
             while(present(ligne, i+1, x)); //vérification si ce candidat a déjà été choisi
 			ligne[i] = x; //si il n'est pas présent, l'ajouter au tableau
         }
-        tri_fusion(ligne, 0, nc); //tri du tableau des candidats
+        mergeSort(ligne, 0, nc); //tri du tableau des candidats
         afficher_tab(ligne, nc);
         rewind(file); //remonter dans le fichier contenant les votants
         int j = 0; //variable d'incrémentation dans la boucle des candidats
@@ -175,26 +250,26 @@ void generate_random_data(int nv, int nc){
                 return;
             }
             for(j=0; j<x; j++){ //lecture pour retrouver la ligne contenant le candidat pour lequelle le votant va voter
-                if(fgets(buffer, 256, fileC)){ //si erreur de lecture
-                    if(sscanf(buffer, "%s , %s", key1, key2) == 2){ //formatage de la ligne du candidat souhaité
-                        pKeyC = str_to_key(key1); //allocation de la mémoire à chaque tour de boucle (libéré)
-                    }
-                    else{ //si erreur de formatage
-                        printf("erreur de formatage\n");
-                    }
-                }
-                else{
+                if(!fgets(buffer, 256, fileC)){ //si erreur de lecture
                     printf("erreur de lecture e\n");
                     return;
                 }
             }
+            if(sscanf(buffer, "%s , %s", key1, key2) == 2){ //formatage de la ligne du candidat souhaité
+            	pKeyC = str_to_key(key1); //allocation de la mémoire à chaque tour de boucle (libéré)       
+            }
+            else{ //si erreur de formatage
+	            printf("erreur de formatage\n");
+            }
             signature = vote(sKeyV, pKeyC); //allocation de la mémoire à chaque tour de boucle pour la signature du vote (libéré)
             pr = init_protected(pKeyV, key_to_str(pKeyC), signature); //allocation de la mémoire à chaque tour de boucle conenant la déclaration de vote (libéré)
-            fprintf(fileV, "%s", protected_to_str(pr)); //écriture dans le fichier declaration.txt la declaration de vote du votant actuelle
+            char *chaine = protected_to_str(pr);
+            fprintf(fileV, "%s", chaine); //écriture dans le fichier declaration.txt la declaration de vote du votant actuelle
             fputc('\n', fileV); //saut de ligne dans le fichier
-            //free(sKeyV); //libération de la mémoire
-            //free(pKeyC); //libération de la mémoire
-            //delete_protected(pr); //libération de la mémoire
+            free(chaine);
+            free(sKeyV); //libération de la mémoire
+            free(pKeyC);
+            delete_protected(pr); //libération de la mémoire
         }
 	}
 	fclose(file); //fermeture du fichier
@@ -264,7 +339,7 @@ int main(void){
     Key *k = str_to_key(chaine); //allocation de la mémoire (libérée)
     printf("str_to_key: %lx, %lx \n", k->val, k->n);
     //free(k);
-	//free(chaine);
+	free(chaine);
     //Testing signature
     //Cadidate keys
     Key *pKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
@@ -284,16 +359,16 @@ int main(void){
     char *mess = key_to_str(pKeyC); //allocation de la mémoire (libérée)
     char *pKeyStr = key_to_str(pKey); //allocation de la mémoire (libérée)
     printf("%s vote pour %s\n", pKeyStr, mess);
-    //free(pKeyStr);
+    free(pKeyStr);
     Signature *sgn = sign(mess, sKey); //allocation de la mémoire (libérée)
     //free(mess);
     printf("signature: ");
     print_long_vector(sgn->tab, sgn->taille);
     chaine = signature_to_str(sgn); //allocation de la mémoire (libérée)
-    //delete_signature(sgn);
+    delete_signature(sgn);
     printf("signature_to_str: %s \n", chaine);
     sgn = str_to_signature(chaine);  //allocation de la mémoire (libérée)
-    //free(chaine);
+    free(chaine);
     printf("str_to_signature: ");
     print_long_vector(sgn->tab, sgn->taille);
     //free(pKeyC);
@@ -311,23 +386,25 @@ int main(void){
     delete_protected(pr);
     printf("protected_to_str: %s\n", chaine);
     pr = str_to_protected(chaine); //allocation de la mémoire (libérée)
-    //free(chaine);
+    free(chaine);
     char *keyStr = key_to_str(pr->pKey); //allocation de la mémoire (libérée)
     char *signStr = signature_to_str(pr->sign); //allocation de la mémoire (libérée)
     printf("str_to_protected: %s %s %s\n", keyStr, pr->mess, signStr);
     //free(keyStr);
-    //free(signStr);
-    //delete_protected(pr);
+    free(signStr);
+    delete_protected(pr);
     //free(sKey);
+    //delete_signature(sgn);
     //fin du main fourni
 
 	generate_random_data(100, 10); //génération des donées aléatoire
     CellKey *liste = read_public_keys("keys.txt"); //allocation de la mémoire d'une liste contenant les clés des votants (libérée)
-    //print_list_keys(liste); //affichage de la liste
+    print_list_keys(liste); //affichage de la liste
     CellProtected *liste2 = read_protected("declarations.txt"); ////allocation de la mémoire d'une liste contenant les déclarations de vote (libérée)
     afficher_cell_protected(liste2); //affichage de la liste
     verification_fraude(&liste2); //vérification de fraudes
     delete_liste_key(liste); //libération de la mémoire
     delete_liste_protected(liste2); //libération de la mémoire
+    printf("sizeof sign: %ld\n", sizeof(Signature));
     return 0;
 }

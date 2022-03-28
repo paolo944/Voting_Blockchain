@@ -76,7 +76,9 @@ Protected *str_to_protected(char *chaine){
         return NULL;
     }
     Key *pKey = str_to_key(pKey_str); //allocation de mémoire
+    free(pKey_str);
     Signature *sign = str_to_signature(sign_str); //allocation de mémoire
+	free(sign_str);
     return init_protected(pKey, mess, sign); //allocation de mémoire et initialisation de la déclaration
 }
 
@@ -86,6 +88,7 @@ void delete_protected(Protected *p){
     //valeur de retour: aucune
     free(p->pKey);
     free(p->mess);
-    delete_signature(p->sign);
+    free(p->sign->tab);
+    free(p->sign);
     free(p);
 }
