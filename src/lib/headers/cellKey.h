@@ -8,7 +8,7 @@
 typedef struct cellKey{
     Key *data;
     struct cellKey *next;
-} CellKey;
+}CellKey;
 
 CellKey *create_cell_key(Key *key);
 void ajout_en_tete(CellKey *key, CellKey **liste);
