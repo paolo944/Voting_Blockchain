@@ -132,7 +132,6 @@ void generate_random_data(int nv, int nc){
             if(fgets(buffer, 256, file)){ //sinon lecture de chaque ligne dans le fichier contenant les votants et vérification de la lecture
                 //printf("i=%d, j=%d\n", i, ligne[j]);
                 if(i == ligne[j]){ //si la ligne actuelle est celle d'un candidat
-                    printf("i=%d\n", i);
                     fprintf(fileC, "%s", buffer); //on recopie dans le fichier des candidats la ligne actuelle
                     j++; //incrémentation de j
                 }
@@ -160,7 +159,6 @@ void generate_random_data(int nv, int nc){
                 printf("erreur de lecture a\n");
                 return;
             }
-            printf("x: %d\n", x);
             for(j=0; j<x-1; j++){ //lecture pour retrouver la ligne contenant le candidat pour lequelle le votant va voter
                 if(!fgets(buffer, 256, fileC)){ //si erreur de lecture
                     printf("buffer: %s", buffer);
