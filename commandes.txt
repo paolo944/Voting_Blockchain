@@ -1,5 +1,4 @@
-plot "courbes.txt" using 1:2 title "Naive" with lines
-replot "courbes.txt" using 1:3 title "Pas Naive" with lines
+plot "courbes_random.txt" using 1:2 title "generate_random_data" with linespoints
 set term postscript portrait
-set output "courbes.jpg"
-set size 0.7, 0.7
+set output "courbes2.jpg"
+set size 1, 1

@@ -82,12 +82,12 @@ void generate_random_data(int nv, int nc){
         return;
     }
 	else{ //Si toutes les ouvertures se sont bien déroulées
-		Key *pKey = malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
+		Key *pKey = (Key*)malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
         if(!pKey){ //vérification de l'allocation
             printf("Erreur d'allocation\n");
             return;
         }
-    	Key *sKey = malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
+    	Key *sKey = (Key*)malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
         if(!sKey){ //vérification de l'allocation
             printf("Erreur d'allocation\n");
             return;
@@ -122,7 +122,7 @@ void generate_random_data(int nv, int nc){
 			ligne[i] = x; //si il n'est pas présent, l'ajouter au tableau
         }
         qsort(ligne, nc, sizeof(int), intCompare); //tri du tableau des candidats
-        afficher_tab(ligne, nc);
+        //afficher_tab(ligne, nc);
         rewind(file); //remonter dans le fichier contenant les votants
         int j = 0; //variable d'incrémentation dans la boucle des candidats
         for(int i=0; i<nv; i++){ //boucle qui remplit le fichier des candidats
@@ -132,7 +132,6 @@ void generate_random_data(int nv, int nc){
             if(fgets(buffer, 256, file)){ //sinon lecture de chaque ligne dans le fichier contenant les votants et vérification de la lecture
                 //printf("i=%d, j=%d\n", i, ligne[j]);
                 if(i == ligne[j]){ //si la ligne actuelle est celle d'un candidat
-                    printf("i=%d\n", i);
                     fprintf(fileC, "%s", buffer); //on recopie dans le fichier des candidats la ligne actuelle
                     j++; //incrémentation de j
                 }
@@ -160,7 +159,6 @@ void generate_random_data(int nv, int nc){
                 printf("erreur de lecture a\n");
                 return;
             }
-            printf("x: %d\n", x);
             for(j=0; j<x-1; j++){ //lecture pour retrouver la ligne contenant le candidat pour lequelle le votant va voter
                 if(!fgets(buffer, 256, fileC)){ //si erreur de lecture
                     printf("buffer: %s", buffer);
@@ -227,16 +225,38 @@ void generate_random_data(int nv, int nc){
 
     return 0;
 }*/
+
+/*
+int main(){
+	FILE *fic = fopen("courbes_random.txt", "w");
+	if(fic == NULL){
+		printf("erreur d'ouverture");
+	}
+
+    clock_t temps_initial;
+    clock_t temps_final;
+    double temps_cpu;
+
+    for(int i=10; i<800; i+=50){
+        temps_initial = clock();
+        generate_random_data(1000, i);
+        temps_final = clock();
+        temps_cpu = (double)(temps_final-temps_initial)/CLOCKS_PER_SEC;
+        fprintf(fic, "%d %.10f\n", i, temps_cpu);
+    }
+	return 0;
+}*/
+
 int main(void){
     srand(time(NULL));
     //début du main fourni
     //Testing Init Keys
-    Key *pKey = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *pKey = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!pKey){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         return 1;
     }
-    Key *sKey = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *sKey = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!sKey){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         //free(sKey);
@@ -255,12 +275,12 @@ int main(void){
 	free(chaine);
     //Testing signature
     //Cadidate keys
-    Key *pKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *pKeyC = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!pKeyC){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         return 1;
     }
-    Key *sKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *sKeyC = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!sKeyC){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         return 1;
@@ -307,12 +327,23 @@ int main(void){
     //delete_signature(sgn);
     //fin du main fourni
 
-	generate_random_data(100, 10); //génération des donées aléatoire
+	generate_random_data(10, 2); //génération des donées aléatoire
     CellKey *liste = read_public_keys("keys.txt"); //allocation de la mémoire d'une liste contenant les clés des votants (libérée)
-    //print_list_keys(liste); //affichage de la liste
+    print_list_keys(liste); //affichage de la liste
     CellProtected *liste2 = read_protected("declarations.txt"); ////allocation de la mémoire d'une liste contenant les déclarations de vote (libérée)
-    //afficher_cell_protected(liste2); //affichage de la liste
+	printf("On ajoute une fraude\n");
+	Key* ktest = (Key*)malloc(sizeof(Key));
+    ktest->val = 123456;
+    ktest->n = 456789;
+    Signature* signtest = sign("prout", ktest);
+	char *fraude = strdup("coucou la fraude");
+    Protected* prtest = init_protected(ktest, fraude, signtest);
+    CellProtected* cptest = create_cell_protected(prtest);
+	ajout_en_tete_protected(cptest, &liste2);
+	afficher_cell_protected(liste2); //affichage de la liste
     verification_fraude(&liste2); //vérification de fraudes
+	printf("\e[0;35m-----\e[0;31mAprès vérification des fraudes\e[0;35m-----\033[0m\n");
+	afficher_cell_protected(liste2); //affichage de la liste
     delete_liste_key(liste); //libération de la mémoire
     delete_liste_protected(liste2); //libération de la mémoire
     return 0;

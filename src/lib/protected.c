@@ -35,7 +35,7 @@ char *protected_to_str(Protected *pr){
     //paramètres: une déclaration pr de type protected
     //la déclaration est transformé en une chaine de caractère contenant les mêmes informations
     //valeur de retour: la chaine de caractère contenant la déclaration
-    char *chaine = malloc(256*sizeof(char)); //allocation de mémoire
+    char *chaine = (char*)malloc(256*sizeof(char)); //allocation de mémoire
     if(!chaine){ //vérification de l'allocation
         printf("Erreur pendant l'allocation\n");
         free(chaine);
