@@ -10,13 +10,6 @@ Signature *init_signature(long *content, int size){
         free(sign);
         return NULL;
     }
-    sign->tab = (long*)malloc(sizeof(long)); //allocation de mémoire
-    if(!sign->tab){ //vérification de l'allocation
-        printf("Erreur pendant l'allocation\n");
-        free(sign->tab);
-        free(sign);
-        return NULL;
-    }
     sign->tab = content;
     sign->taille = size;
     return sign;

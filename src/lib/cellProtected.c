@@ -42,6 +42,7 @@ CellProtected *read_protected(char *nomfic){
         pr = str_to_protected(buffer); //allocation de mémoire
         ajout_en_tete_protected(create_cell_protected(pr), &liste); //allocation de mémoire et ajout de la cellule dans la liste
     }
+    fclose(fic);
     return liste;
 }
 

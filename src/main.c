@@ -34,102 +34,13 @@ void remplir(int *tab, int len){
 	}
 }
 
-/*
-void interclasser(int *t, int p, int m, int g){
-    int tmp[p-g+1]; 
-    int i, j, k;
-    for(i=p; i<=g; i++) tmp[i]=t[i];
+static int intCompare(const void *p1, const void *p2){
+    int int_a = *((int*)p1);
+    int int_b = *((int*)p2);
 
-    i = p; j=m+1; k=p;
-
-    for(k=p; k<=g; k++){
-        if(i==m+1)
-            t[k]=tmp[j++];
-        else if(j==g+1)
-            t[k]=tmp[i++];
-        else if(tmp[i]<tmp[j])
-            t[k]=tmp[i++];
-        else
-            t[k]=tmp[j++];
-    }
-}
-
-
-void tri_fusion(int *t, int deb, int fin){
-    //paramètres: tab[int], int i(indice de tableau), int j(indice du tableau)
-    //trie le tableau t
-    //Aucune valeur de retour.
-    if(deb<fin){
-        int milieu = (deb+fin)/2;
-        tri_fusion(t, deb, milieu);
-        tri_fusion(t, milieu+1, fin);
-        interclasser(t, deb, milieu, fin);
-    }
-}
-*/
-
-void merge(int arr[], int p, int q, int r) {
-
-  // Create L ← A[p..q] and M ← A[q+1..r]
-  int n1 = q - p + 1;
-  int n2 = r - q;
-
-  int L[n1], M[n2];
-  remplir(L, n1);
-  remplir(M, n2);
-
-  for (int i = 0; i < n1; i++)
-    L[i] = arr[p + i];
-  for (int j = 0; j < n2; j++)
-    M[j] = arr[q + 1 + j];
-
-  // Maintain current index of sub-arrays and main array
-  int i, j, k;
-  i = 0;
-  j = 0;
-  k = p;
-
-  // Until we reach either end of either L or M, pick larger among
-  // elements L and M and place them in the correct position at A[p..r]
-  while (i < n1 && j < n2) {
-    if (L[i] <= M[j]) {
-      arr[k] = L[i];
-      i++;
-    } else {
-      arr[k] = M[j];
-      j++;
-    }
-    k++;
-  }
-
-  // When we run out of elements in either L or M,
-  // pick up the remaining elements and put in A[p..r]
-  while (i < n1) {
-    arr[k] = L[i];
-    i++;
-    k++;
-  }
-
-  while (j < n2) {
-    arr[k] = M[j];
-    j++;
-    k++;
-  }
-}
-
-// Divide the array into two subarrays, sort them and merge them
-void mergeSort(int arr[], int l, int r) {
-  if (l < r) {
-
-    // m is the point where the array is divided into two subarrays
-    int m = l + (r - l) / 2;
-
-    mergeSort(arr, l, m);
-    mergeSort(arr, m + 1, r);
-
-    // Merge the sorted subarrays
-    merge(arr, l, m, r);
-  }
+    if(int_a == int_b) return 0;
+    else if(int_a < int_b) return -1;
+    else return 1;
 }
 
 void afficher_tab(int *tab, int len){
@@ -210,7 +121,7 @@ void generate_random_data(int nv, int nc){
             while(present(ligne, i+1, x)); //vérification si ce candidat a déjà été choisi
 			ligne[i] = x; //si il n'est pas présent, l'ajouter au tableau
         }
-        mergeSort(ligne, 0, nc); //tri du tableau des candidats
+        qsort(ligne, nc, sizeof(int), intCompare); //tri du tableau des candidats
         afficher_tab(ligne, nc);
         rewind(file); //remonter dans le fichier contenant les votants
         int j = 0; //variable d'incrémentation dans la boucle des candidats
@@ -338,20 +249,18 @@ int main(void){
     printf("key_to_str: %s \n", chaine);
     Key *k = str_to_key(chaine); //allocation de la mémoire (libérée)
     printf("str_to_key: %lx, %lx \n", k->val, k->n);
-    //free(k);
+    free(k);
 	free(chaine);
     //Testing signature
     //Cadidate keys
     Key *pKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!pKeyC){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
-        //free(pKeyC);
         return 1;
     }
     Key *sKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!sKeyC){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
-        //free(sKeyC);
         return 1;
     }
     init_pair_keys(pKeyC, sKeyC, 7, 9);
@@ -361,7 +270,6 @@ int main(void){
     printf("%s vote pour %s\n", pKeyStr, mess);
     free(pKeyStr);
     Signature *sgn = sign(mess, sKey); //allocation de la mémoire (libérée)
-    //free(mess);
     printf("signature: ");
     print_long_vector(sgn->tab, sgn->taille);
     chaine = signature_to_str(sgn); //allocation de la mémoire (libérée)
@@ -371,8 +279,6 @@ int main(void){
     free(chaine);
     printf("str_to_signature: ");
     print_long_vector(sgn->tab, sgn->taille);
-    //free(pKeyC);
-    //free(sKeyC);
     //Testing protected:
     Protected *pr = init_protected(pKey, mess, sgn); //allocation de la mémoire (libérée)
     //Verification:
@@ -390,10 +296,12 @@ int main(void){
     char *keyStr = key_to_str(pr->pKey); //allocation de la mémoire (libérée)
     char *signStr = signature_to_str(pr->sign); //allocation de la mémoire (libérée)
     printf("str_to_protected: %s %s %s\n", keyStr, pr->mess, signStr);
-    //free(keyStr);
+    free(keyStr);
     free(signStr);
     delete_protected(pr);
-    //free(sKey);
+    free(sKeyC);
+    free(pKeyC);
+    free(sKey);
     //delete_signature(sgn);
     //fin du main fourni
 
@@ -405,6 +313,5 @@ int main(void){
     verification_fraude(&liste2); //vérification de fraudes
     delete_liste_key(liste); //libération de la mémoire
     delete_liste_protected(liste2); //libération de la mémoire
-    printf("sizeof sign: %ld\n", sizeof(Signature));
     return 0;
 }
