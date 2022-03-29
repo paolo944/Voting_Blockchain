@@ -125,7 +125,7 @@ void generate_random_data(int nv, int nc){
         afficher_tab(ligne, nc);
         rewind(file); //remonter dans le fichier contenant les votants
         int j = 0; //variable d'incrémentation dans la boucle des candidats
-        for(int i=1; i<=nv; i++){ //boucle qui remplit le fichier des candidats
+        for(int i=0; i<nv; i++){ //boucle qui remplit le fichier des candidats
             if(j == nc){ //si le nombre de candidats trouvé est atteint, la boucle est arrêtée
                 break;
             }
@@ -160,8 +160,10 @@ void generate_random_data(int nv, int nc){
                 printf("erreur de lecture a\n");
                 return;
             }
-            for(j=0; j<x; j++){ //lecture pour retrouver la ligne contenant le candidat pour lequelle le votant va voter
+            printf("x: %d\n", x);
+            for(j=0; j<x-1; j++){ //lecture pour retrouver la ligne contenant le candidat pour lequelle le votant va voter
                 if(!fgets(buffer, 256, fileC)){ //si erreur de lecture
+                    printf("buffer: %s", buffer);
                     printf("erreur de lecture e\n");
                     return;
                 }
@@ -307,9 +309,9 @@ int main(void){
 
 	generate_random_data(100, 10); //génération des donées aléatoire
     CellKey *liste = read_public_keys("keys.txt"); //allocation de la mémoire d'une liste contenant les clés des votants (libérée)
-    print_list_keys(liste); //affichage de la liste
+    //print_list_keys(liste); //affichage de la liste
     CellProtected *liste2 = read_protected("declarations.txt"); ////allocation de la mémoire d'une liste contenant les déclarations de vote (libérée)
-    afficher_cell_protected(liste2); //affichage de la liste
+    //afficher_cell_protected(liste2); //affichage de la liste
     verification_fraude(&liste2); //vérification de fraudes
     delete_liste_key(liste); //libération de la mémoire
     delete_liste_protected(liste2); //libération de la mémoire
