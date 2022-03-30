@@ -17,33 +17,25 @@ int hash_function(Key *key, int size){
 
 int find_position(HashTable *t, Key *key){
     int cle = hash_function(key, t->size);
-    if(t->tab[cle]->key != NULL){
-        if(t->tab[cle]->key == key){
-            return cle;
-        }
-        else{
-            int i = 1;
-            while(t->tab[(cle+i)%t->size] && i%t->size != 0){
-                if(t->tab[(cle+i)%t->size]->key == key){
-                    return (cle+i)%t->size;
-                }
-                i++;
+    if(t->tab[cle] != NULL){
+        if(t->tab[cle]->key){
+            if(t->tab[cle]->key->val == key->val && t->tab[cle]->key->n == key->n){
+                return cle;
             }
-            if(i%t->size == 0) return -1;
-            return (cle+i)%t->size;
-        }
-    }
-    else{
-        int i = 1;
-        while(t->tab[(cle+i)%t->size] && i%t->size != 0){
-            if(t->tab[(cle+i)%t->size]->key == key){
+            else{
+                int i = 1;
+                while(t->tab[(cle+i)%t->size] && i%t->size != 0){
+                    if(t->tab[cle]->key->val == key->val && t->tab[cle]->key->n == key->n){
+                        return (cle+i)%t->size;
+                    }
+                    i++;
+                }
+                if(i%t->size == 0) return -1;
                 return (cle+i)%t->size;
             }
-            i++;
         }
-        if(i%t->size == 0) return -1;
-        return (cle+i)%t->size;
     }
+    return cle;
 }
 
 HashTable *create_hashtable(CellKey *keys, int size){
@@ -60,8 +52,11 @@ HashTable *create_hashtable(CellKey *keys, int size){
     }
     h->size = size;
     CellKey *tmp = keys;
+    for(int i=0; i<h->size; i++){
+        h->tab[i] = NULL;
+    }
     while(tmp){
-        h->tab[find_position(h, tmp->data)]->key = tmp->data;
+        h->tab[find_position(h, tmp->data)] = create_hashcell(tmp->data);
         tmp = tmp->next;
     }
     return h;
@@ -89,17 +84,27 @@ Key* compute_winner(CellProtected* decl, CellKey* candidates, CellKey* voters, i
             if(hv->tab[cle]->val == 0){
                 pKeyC = str_to_key(tmp->data->mess);
                 hv->tab[cle]->val = 1;
-                hc->tab[find_position(hc, pKeyC)]->val++;
+                if(hc->tab[find_position(hc, pKeyC)]){
+                    hc->tab[find_position(hc, pKeyC)]->val++;
+                }
                 free(pKeyC);
             }
         }
         tmp = tmp->next;
     }
-    HashCell *vainqeur = hc->tab[0];
+    int i=0;
+    HashCell *max = hc->tab[i];
+    while(!max){
+        i++;
+        max = hc->tab[i];
+    }
     for(int i=1; i<hc->size; i++){
-        if(vainqeur->val < hc->tab[i]->val){
-            vainqeur = hc->tab[i];
+        if(hc->tab[i]){
+            if(max->val < hc->tab[i]->val){
+                max = hc->tab[i];
+            }
         }
     }
-    return vainqeur->key;
+    Key *winner = hc->tab[find_position(hc, max->key)]->key;
+    return winner;
 }

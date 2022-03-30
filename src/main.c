@@ -342,16 +342,17 @@ int main(void){
 }*/
 
 int main(){
+    srand(time(NULL));
     generate_random_data(500, 10);
     CellKey *votants = read_public_keys("keys.txt");
     CellProtected *declarations = read_protected("declarations.txt");
     CellKey *candidats = read_public_keys("candidates.txt");
     Key *winner = compute_winner(declarations, candidats, votants, 500, 10);
-    printf("And the winner is: %s", key_to_str(winner));
+    printf("And the winner is: %s\n", key_to_str(winner));
     free(winner);
-    delete_liste_key(votants); //libération de la mémoire
-    delete_liste_protected(declarations);
-    delete_liste_key(candidats);
+    //delete_liste_key(votants); //libération de la mémoire
+    //delete_liste_protected(declarations);
+    //delete_liste_key(candidats);
 
     return 0;
 }
