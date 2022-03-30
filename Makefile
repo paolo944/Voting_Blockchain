@@ -1,7 +1,7 @@
 all: main
 
-main: main.o encryption.o rsa.o protected.o signature.o key.o cellKey.o cellProtected.o
-	gcc -Wall -ggdb -lm -o main bin/main.o bin/encryption.o bin/rsa.o bin/protected.o bin/signature.o bin/key.o bin/cellKey.o bin/cellProtected.o
+main: main.o encryption.o rsa.o protected.o signature.o key.o cellKey.o cellProtected.o hashCell.o
+	gcc -Wall -ggdb -lm -o main bin/main.o bin/encryption.o bin/rsa.o bin/protected.o bin/signature.o bin/key.o bin/cellKey.o bin/cellProtected.o bin/hashCell.o
 
 main.o:  src/main.c src/lib/headers/rsa.h src/lib/headers/encryption.h 
 	gcc -Wall -c src/main.c -o bin/main.o
@@ -26,6 +26,9 @@ cellKey.o: src/lib/cellKey.c
 
 cellProtected.o: src/lib/cellProtected.c
 	gcc -ggdb -Wall -c src/lib/cellProtected.c -o bin/cellProtected.o
+
+hashCell.o: src/lib/hashCell.c
+	gcc -ggdb -Wall -c src/lib/hashCell.c -o bin/hashCell.o
 
 clean :
 	rm bin/*.o

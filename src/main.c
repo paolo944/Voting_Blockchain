@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "lib/headers/encryption.h"
-#include "lib/headers/rsa.h"
-#include "lib/headers/key.h"
-#include "lib/headers/signature.h"
-#include "lib/headers/protected.h"
-#include "lib/headers/cellKey.h"
-#include "lib/headers/cellProtected.h"
+#include "lib/headers/hashCell.h"
 
 void print_long_vector(long *result, int size){ //Fonction fourni par le sujet
     printf ("Vector: [");
@@ -246,7 +238,7 @@ int main(){
     }
 	return 0;
 }*/
-
+/*
 int main(void){
     srand(time(NULL));
     //début du main fourni
@@ -346,5 +338,20 @@ int main(void){
 	afficher_cell_protected(liste2); //affichage de la liste
     delete_liste_key(liste); //libération de la mémoire
     delete_liste_protected(liste2); //libération de la mémoire
+    return 0;
+}*/
+
+int main(){
+    generate_random_data(500, 10);
+    CellKey *votants = read_public_keys("keys.txt");
+    CellProtected *declarations = read_protected("declarations.txt");
+    CellKey *candidats = read_public_keys("candidates.txt");
+    Key *winner = compute_winner(declarations, candidats, votants, 500, 10);
+    printf("And the winner is: %s", key_to_str(winner));
+    free(winner);
+    delete_liste_key(votants); //libération de la mémoire
+    delete_liste_protected(declarations);
+    delete_liste_key(candidats);
+
     return 0;
 }

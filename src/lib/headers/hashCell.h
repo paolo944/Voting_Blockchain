@@ -1,5 +1,6 @@
 #include "cellKey.h"
 #include "cellProtected.h"
+#include <stdlib.h>
 
 #ifndef HASHCELL_H
 #define HASHCELL_H
