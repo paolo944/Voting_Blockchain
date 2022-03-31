@@ -1,8 +1,11 @@
 #include "headers/hashCell.h"
 
 HashCell *create_hashcell(Key *key){
+    //paramètres: clé de type Key
+    //
+    //valeur de retour: la cellule crée
     HashCell *h = (HashCell*)malloc(sizeof(HashCell)); //Allocation de la mémoire
-    if(!h){
+    if(!h){ //vérification de l'allocation
         printf("erreur d'allocation\n");
         return NULL;
     }
@@ -12,10 +15,16 @@ HashCell *create_hashcell(Key *key){
 }
 
 int hash_function(Key *key, int size){
+    //paramètres: clé de type Key et la taille de la table
+    //
+    //valeur de retour: la valeur de hachage de key->val
 	return (int)(size*((key->val)*((sqrt(5)-1)/2)-(int)((key->val)*((sqrt(5)-1)/2))));
 }
 
 int find_position(HashTable *t, Key *key){
+    //paramètres: une table de hashage t clé de type Key
+    //
+    //valeur de retour: l'indice 
     int cle = hash_function(key, t->size);
     if(t->tab[cle] != NULL){
         if(t->tab[cle]->key){
@@ -39,6 +48,9 @@ int find_position(HashTable *t, Key *key){
 }
 
 HashTable *create_hashtable(CellKey *keys, int size){
+    //paramètres: une liste chaînée de clé et la taille de la liste
+    //
+    //valeur de retour: la table de hachage crée
     HashTable *h = (HashTable*)malloc(sizeof(HashTable)); //Allocation de la mémoire
     if(!h){
         printf("erreur d'allocation\n");
@@ -63,6 +75,9 @@ HashTable *create_hashtable(CellKey *keys, int size){
 }
 
 void delete_hashtable(HashTable* t){
+    //paramètres: une table de hachage t
+    //
+    //valeur de retour: aucune
     for(int i=0; i<t->size; i++){
         free(t->tab[i]->key);
         free(t->tab[i]);
@@ -72,6 +87,9 @@ void delete_hashtable(HashTable* t){
 }
 
 Key* compute_winner(CellProtected* decl, CellKey* candidates, CellKey* voters, int sizeC, int sizeV){
+    //paramètres: 
+    //
+    //valeur de retour: la clé du gagnat
     verification_fraude(&decl);
     HashTable *hc = create_hashtable(candidates, sizeC);
     HashTable *hv = create_hashtable(voters, sizeV);

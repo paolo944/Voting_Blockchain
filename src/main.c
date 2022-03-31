@@ -343,15 +343,15 @@ int main(void){
 
 int main(){
     srand(time(NULL));
-    generate_random_data(500, 10);
-    CellKey *votants = read_public_keys("keys.txt");
-    CellProtected *declarations = read_protected("declarations.txt");
-    CellKey *candidats = read_public_keys("candidates.txt");
+    generate_random_data(500, 10); //création d'éléction aléatoire
+    CellKey *votants = read_public_keys("keys.txt"); //liste chaînée des votants
+    CellProtected *declarations = read_protected("declarations.txt"); //liste chaînée des déclarations de vote
+    CellKey *candidats = read_public_keys("candidates.txt"); //liste chaînée des candidats
     Key *winner = compute_winner(declarations, candidats, votants, 500, 10);
     printf("And the winner is: %s\n", key_to_str(winner));
     delete_liste_key(votants); //libération de la mémoire
-    delete_liste_protected(declarations);
-    delete_liste_key(candidats);
+    delete_liste_protected(declarations); //libération de la mémoire
+    delete_liste_key(candidats); //libération de la mémoire
 
     return 0;
 }
