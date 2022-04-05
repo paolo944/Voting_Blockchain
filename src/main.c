@@ -1,3 +1,4 @@
+#include <openssl/sha.h>
 #include "lib/headers/hashCell.h"
 
 void print_long_vector(long *result, int size){ //Fonction fourni par le sujet
@@ -342,16 +343,24 @@ int main(void){
 }*/
 
 int main(){
-    srand(time(NULL));
-    generate_random_data(500, 10); //création d'éléction aléatoire
-    CellKey *votants = read_public_keys("keys.txt"); //liste chaînée des votants
-    CellProtected *declarations = read_protected("declarations.txt"); //liste chaînée des déclarations de vote
-    CellKey *candidats = read_public_keys("candidates.txt"); //liste chaînée des candidats
-    Key *winner = compute_winner(declarations, candidats, votants, 500, 10);
-    printf("And the winner is: %s\n", key_to_str(winner));
-    delete_liste_key(votants); //libération de la mémoire
-    delete_liste_protected(declarations); //libération de la mémoire
-    delete_liste_key(candidats); //libération de la mémoire
+    // srand(time(NULL));
+    // generate_random_data(500, 10); //création d'éléction aléatoire
+    // CellKey *votants = read_public_keys("keys.txt"); //liste chaînée des votants
+    // CellProtected *declarations = read_protected("declarations.txt"); //liste chaînée des déclarations de vote
+    // CellKey *candidats = read_public_keys("candidates.txt"); //liste chaînée des candidats
+    // Key *winner = compute_winner(declarations, candidats, votants, 500, 10);
+    // printf("And the winner is: %s\n", key_to_str(winner));
+    // delete_liste_key(votants); //libération de la mémoire
+    // delete_liste_protected(declarations); //libération de la mémoire
+    // delete_liste_key(candidats); //libération de la mémoire
+
+    const char *s = "Rosettaa code";
+    unsigned char *d = SHA256(s, strlen(s), 0);
+    int i;
+    for(i = 0; i < SHA256_DIGEST_LENGTH; i++){
+        printf("%02x", d[i]);
+    }
+    putchar('\n');
 
     return 0;
 }

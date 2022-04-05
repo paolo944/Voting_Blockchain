@@ -12,6 +12,8 @@ typedef struct block{
 }Block;
 
 void ecrire_block(Block *b, char *nomFic);
-Block lire_block(char *nomFic);
+Block *lire_block(char *nomFic);
+char *block_to_str(Block *block);
+
 
 #endif //BLOCK_H
