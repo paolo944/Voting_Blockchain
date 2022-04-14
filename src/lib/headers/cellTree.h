@@ -16,5 +16,8 @@ int update_height(CellTree* father,CellTree* child);
 void add_child(CellTree* father, CellTree* child);
 void print_tree(CellTree* arbre);
 void delete_node(CellTree* node);
+void delete_tree(CellTree* arbre);
+CellTree* highest_child(CellTree* cell);
+CellTree* last_node(CellTree* tree);
 
 #endif //CELLTREE_H
