@@ -147,6 +147,7 @@ void compute_proof_of_work(Block* B,int d){
 		}
         if (p==d){
             i=0;
+            B->hash=testHexa;
         }
     }
 }
