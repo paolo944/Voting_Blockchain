@@ -3,6 +3,7 @@
 #include "block.h"
 #include "cellTree.h"
 
+
 void submit_vote(Protected* p){
     CellProtected* vote=malloc(sizeof(CellProtected));
     vote->data=p;
@@ -10,7 +11,10 @@ void submit_vote(Protected* p){
     Block* bloc = malloc(sizeof(Block));
     bloc->author=p->pKey;
     bloc->previous_hash=NULL;
-    bloc->hash=miaou256(protected_to_str("123"));
-    bloc->votes=vote;
-
+    bloc->nonce=0;
+    bloc->hash=miaou256(protected_to_str("123"));//123 pour que ça ne passe pas le premier test
+    bloc->votes=vote;                           //compute_proof_of_work mettra tout seul la bonne valeur hash
+    compute_proof_of_work(bloc,5);
+    ecrire_block(bloc,"Pending_votes.txt");
+    
 }

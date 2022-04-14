@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "key.h": "c",
-        "encryption.h": "c"
+        "encryption.h": "c",
+        "protected.h": "c",
+        "celltree.h": "c"
     }
 }
