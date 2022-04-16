@@ -31,7 +31,16 @@ int update_height(CellTree* father,CellTree* child){
 }
 
 void add_child(CellTree* father, CellTree* child){
-    father->firstChild->nextBro=child;
+    if(father->firstChild){
+        CellTree* tmp=father->firstChild;
+        while(tmp->nextBro){
+            tmp=tmp->nextBro;
+        }
+        tmp->nextBro=child;
+    }
+    else{
+        father->firstChild=child;
+    }
     if(update_height(father,child)){
         CellTree* tmp=father;
         CellTree* tmp2=child;
@@ -111,7 +120,7 @@ CellTree* highest_child(CellTree* cell){
         tmp=res;
         while(tmp->nextBro){
             tmp=tmp->nextBro;
-            if(res->height<tmp->nextBro){
+            if(res->height<highest_child(tmp)->height){
                 res=tmp;
             }
         return res;
