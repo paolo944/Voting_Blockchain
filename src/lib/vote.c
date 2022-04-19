@@ -22,7 +22,22 @@ CellProtected* vote=create_cell_protected(p);
 */
 
 void create_block(CellTree* tree, Key* author, int d) {
-    Block* Pending_block=lire_block("Pending_vote.txt");
+    FILE *fic = fopen("Pending_vote.txt", "r");
+    char buffer[256];
+    CellProtected *liste = NULL;
+    char *protectedStr = NULL;
+    while(fgets(buffer, 256, fic)){
+        if(sscanf(buffer, "%s\n", protectedStr) == 1){
+            ajout_en_tete_protected(create_cell_protected(str_to_protected(protectedStr)), &liste);
+        }
+        else{
+            printf("erreur de lecture\n");
+            return NULL;
+        }
+    }
+    Block* Pending_block=malloc(sizeof(Block));
+    remove("Pending_block.txt");
     Pending_block->author=author;
-    Pending_block->nonce=d;
+    Pending_block->votes=liste;
+    compute_proof_of_work(Pending_block,d);
 }
