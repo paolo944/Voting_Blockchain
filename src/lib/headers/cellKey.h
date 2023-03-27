@@ -8,7 +8,7 @@
 typedef struct cellKey{
     Key *data;
     struct cellKey *next;
-} CellKey;
+}CellKey;
 
 CellKey *create_cell_key(Key *key);
 void ajout_en_tete(CellKey *key, CellKey **liste);
@@ -16,5 +16,6 @@ CellKey *read_public_keys(char *nomFic);
 void print_list_keys(CellKey* LCK);
 void delete_cell_key(CellKey *c);
 void delete_liste_key(CellKey *c);
+int len_cellkey(CellKey *c);
 
 #endif //CELLKEY_H

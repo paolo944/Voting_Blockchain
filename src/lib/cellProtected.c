@@ -85,24 +85,54 @@ void verification_fraude(CellProtected **liste){
     //paramètres: pointeur vers une pointeur vers liste de type CellProtected
     //vérification de toutes signatures contenu dans la liste
     //valeur de retour: aucune
-    CellProtected *c = *liste; //pointeur vers le premier élément de la liste
-    CellProtected *tmp = NULL; //tampon
-    while(c->next){ //tant que toute la liste n'est pas parcourue
-        if(!verify(c->next->data)){ //si la signature n'est pas celle du votant
-            tmp = c->next;
-            if(c->next->next){
-                c->next = c->next->next; //le parcourscontinue
+    CellProtected* prec = *liste;
+    
+    if (!prec->data || !verify(prec->data))
+    {
+        *liste = (*liste)->next;
+        delete_cell_protected(prec);
+    }
+    
+    prec = *liste;
+    CellProtected* temp = (*liste)->next;
+
+    while (temp)
+    {
+        if (!temp->data || !verify(temp->data))
+        {
+            if (!temp->next)
+            {
+                delete_cell_protected(temp);
+                prec->next = NULL;
             }
-            else{
-                c->next = NULL;
+            else
+            {
+                prec->next = temp->next;
+                delete_cell_protected(temp);
             }
-            delete_cell_protected(tmp); //supprimer la cellule qui n'est pas correcte
         }
-        c = c->next;
+        prec = prec->next;
+        temp = temp->next;
     }
-    if(!verify((*liste)->data)){ //vérification de la première case de la liste
-        tmp = *liste;
-        liste = &((*liste)->next);
-        delete_cell_protected(tmp); //supprmier la case
-    }
+}
+
+void fusion(CellProtected **l1, CellProtected **l2){
+    //paramètres: deux listes
+    //fusion des deux listes
+    //valeur de retour: aucune
+	if(*l1 == NULL){
+		*l1 = *l2;
+		*l2 = NULL;
+	}
+	if(*l2 == NULL){
+		return;	
+	}
+	
+	CellProtected *tmp = *l1;
+	
+	while(tmp->next != NULL){
+		tmp = tmp->next;	
+	}
+	tmp->next = *l2;
+	*l2 = NULL;
 }

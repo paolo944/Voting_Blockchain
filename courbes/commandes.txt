@@ -1,0 +1,4 @@
+plot "courbes_random.txt" using 1:2 title "generate_random_data" with linespoints
+set term postscript portrait
+set output "courbes2.jpg"
+set size 1, 1

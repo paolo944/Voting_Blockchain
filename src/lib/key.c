@@ -63,7 +63,7 @@ Key* str_to_key(char* str){
         return key;
     }
     else{
-        printf("Erreur de formatage\n");
+        printf("Erreur de formatage clé sale chien1\n");
         return NULL;
     }
 }

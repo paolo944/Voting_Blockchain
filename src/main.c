@@ -1,12 +1,36 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "lib/headers/encryption.h"
-#include "lib/headers/rsa.h"
-#include "lib/headers/key.h"
-#include "lib/headers/signature.h"
-#include "lib/headers/protected.h"
-#include "lib/headers/cellKey.h"
-#include "lib/headers/cellProtected.h"
+#include "lib/headers/hashCell.h"
+#include "lib/headers/vote.h"
+
+
+void test3 (void (*fct)(Block*, int), Block* b, int min, int max, int pas)
+{
+    clock_t temps_initial;
+    clock_t temps_final;
+    double temps_cpu;
+    FILE* fd = fopen("compute_pof3.txt", "w");
+    int i = 0;                                      //compteur de tour
+    while (min < max)
+    {
+        temps_initial = clock();
+        fct(b, min);                                //lance compute_proof_of_work  
+        temps_final = clock();
+        temps_cpu = ((double) (temps_final - temps_initial)) / CLOCKS_PER_SEC;
+
+        printf("Test n°%d\n", ++i);                 //printf en stdout le numéro du test
+        fprintf(fd, "%d %f\n", min, temps_cpu);     //fprintf dans fd le temps que ça a pris
+        min += pas;                                 //on incrémente de pas
+    }
+    
+    //si notre incrémentation dépasse le max (ou est égale à max mais on sort de la boucle), on effectue un dernier test à la valeur max
+    temps_initial = clock();
+    fct(b, max);
+    temps_final = clock();
+    temps_cpu = ((double) (temps_final - temps_initial)) / CLOCKS_PER_SEC;
+    
+    printf("Test n°%d\n", ++i);
+    fprintf(fd, "%d %f\n", max, temps_cpu);
+    fclose(fd);
+}
 
 void print_long_vector(long *result, int size){ //Fonction fourni par le sujet
     printf ("Vector: [");
@@ -66,7 +90,7 @@ void generate_random_data(int nv, int nc){
     //Genère un fichier contenant les votants, un fichier contenant les candidats
     //Et un dernier fichier contenant les déclarations de vote
     //Aucune valeur de retour
-	FILE *file = fopen("keys.txt", "w+"); //Ouverture du fichier key.txt
+	FILE *file = fopen("votants.txt", "w+"); //Ouverture du fichier key.txt
     FILE *fileC = fopen("candidates.txt", "w+"); //Ouverture du fichier candidats.txt
     FILE *fileV = fopen("declarations.txt", "w"); //Ouverture du fichier declarations.txt
 	if(!file){ //vérification de l'ouverture
@@ -82,12 +106,12 @@ void generate_random_data(int nv, int nc){
         return;
     }
 	else{ //Si toutes les ouvertures se sont bien déroulées
-		Key *pKey = malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
+		Key *pKey = (Key*)malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
         if(!pKey){ //vérification de l'allocation
             printf("Erreur d'allocation\n");
             return;
         }
-    	Key *sKey = malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
+    	Key *sKey = (Key*)malloc(sizeof(Key)); //Allocation de la mémoire (libéré)
         if(!sKey){ //vérification de l'allocation
             printf("Erreur d'allocation\n");
             return;
@@ -122,7 +146,7 @@ void generate_random_data(int nv, int nc){
 			ligne[i] = x; //si il n'est pas présent, l'ajouter au tableau
         }
         qsort(ligne, nc, sizeof(int), intCompare); //tri du tableau des candidats
-        afficher_tab(ligne, nc);
+        //afficher_tab(ligne, nc);
         rewind(file); //remonter dans le fichier contenant les votants
         int j = 0; //variable d'incrémentation dans la boucle des candidats
         for(int i=0; i<nv; i++){ //boucle qui remplit le fichier des candidats
@@ -224,17 +248,38 @@ void generate_random_data(int nv, int nc){
     printf ("Decoded : %s \n", decoded) ;
 
     return 0;
-}*/
+}
+
+int main(){
+	FILE *fic = fopen("courbes_random.txt", "w");
+	if(fic == NULL){
+		printf("erreur d'ouverture");
+	}
+
+    clock_t temps_initial;
+    clock_t temps_final;
+    double temps_cpu;
+
+    for(int i=10; i<800; i+=50){
+        temps_initial = clock();
+        generate_random_data(1000, i);
+        temps_final = clock();
+        temps_cpu = (double)(temps_final-temps_initial)/CLOCKS_PER_SEC;
+        fprintf(fic, "%d %.10f\n", i, temps_cpu);
+    }
+	return 0;
+}
+
 int main(void){
     srand(time(NULL));
     //début du main fourni
     //Testing Init Keys
-    Key *pKey = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *pKey = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!pKey){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         return 1;
     }
-    Key *sKey = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *sKey = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!sKey){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         //free(sKey);
@@ -253,12 +298,12 @@ int main(void){
 	free(chaine);
     //Testing signature
     //Cadidate keys
-    Key *pKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *pKeyC = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!pKeyC){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         return 1;
     }
-    Key *sKeyC = malloc(sizeof(Key)); //allocation de la mémoire (libérée)
+    Key *sKeyC = (Key*)malloc(sizeof(Key)); //allocation de la mémoire (libérée)
     if(!sKeyC){ //vérification de l'allocation
         printf("Erreur d'allocation\n");
         return 1;
@@ -305,13 +350,126 @@ int main(void){
     //delete_signature(sgn);
     //fin du main fourni
 
-	generate_random_data(100, 10); //génération des donées aléatoire
+	generate_random_data(10, 2); //génération des donées aléatoire
     CellKey *liste = read_public_keys("keys.txt"); //allocation de la mémoire d'une liste contenant les clés des votants (libérée)
-    //print_list_keys(liste); //affichage de la liste
+    print_list_keys(liste); //affichage de la liste
     CellProtected *liste2 = read_protected("declarations.txt"); ////allocation de la mémoire d'une liste contenant les déclarations de vote (libérée)
-    //afficher_cell_protected(liste2); //affichage de la liste
+	printf("On ajoute une fraude\n");
+	Key* ktest = (Key*)malloc(sizeof(Key));
+    ktest->val = 123456;
+    ktest->n = 456789;
+    Signature* signtest = sign("prout", ktest);
+	char *fraude = strdup("coucou la fraude");
+    Protected* prtest = init_protected(ktest, fraude, signtest);
+    CellProtected* cptest = create_cell_protected(prtest);
+	ajout_en_tete_protected(cptest, &liste2);
+	afficher_cell_protected(liste2); //affichage de la liste
     verification_fraude(&liste2); //vérification de fraudes
+	printf("\e[0;35m-----\e[0;31mAprès vérification des fraudes\e[0;35m-----\033[0m\n");
+	afficher_cell_protected(liste2); //affichage de la liste
     delete_liste_key(liste); //libération de la mémoire
     delete_liste_protected(liste2); //libération de la mémoire
     return 0;
+}
+*/
+
+/*
+int main(){
+    srand(time(NULL));
+	generate_random_data(100, 10); //création d'éléction aléatoire
+    CellKey *votants = read_public_keys("keys.txt"); //liste chaînée des votants
+    CellProtected *declarations = read_protected("declarations.txt"); //liste chaînée des déclarations de vote
+    CellKey *candidats = read_public_keys("candidates.txt"); //liste chaînée des candidats
+    Key *winner = compute_winner(declarations, candidats, votants, 10, 100s);
+	char *keyStr = key_to_str(winner);
+    printf("And the winner is: %s\n", keyStr);
+	free(keyStr);
+    delete_liste_key(votants); //libération de la mémoire
+    delete_liste_protected(declarations); //libération de la mémoire
+    delete_liste_key(candidats); //libération de la mémoire
+	free(winner);
+	Block *b = lire_block("block.txt");
+	printf("\nmiaou\n");
+	char *block_str = block_to_str(b);
+	unsigned char *s = miaou256(block_str);
+	free(block_str);
+	for(int i=0; i<SHA256_DIGEST_LENGTH; i++){
+		printf("%02x", s[i]);	
+	}
+	printf("\nmiaou fin\n");
+	compute_proof_of_work(b, 4);
+	printf("%d\n", b->nonce);
+	for(int i=0; i<SHA256_DIGEST_LENGTH; i++){
+		printf("%02x", b->hash[i]);	
+	}
+	putchar('\n');
+	printf("verify block: %d\n", verify_block(b,4));
+	ecrire_block(b, "uiui.txt");
+	delete_block(b);
+
+    return 0;
+}
+*/
+int main(){
+	srand(time(NULL));
+	printf("\t\t\e[0;35m----------\e[0;31mMAIN PARTIE 5 EXO 9\e[0;35m----------\033[0m\n");
+	
+	generate_random_data(1000, 5); //Creations des votes
+	CellProtected *declarations = read_protected("declarations.txt"); //Déclarations de vote
+	CellKey *votants = read_public_keys("votants.txt"); //Clé des votants
+	CellKey *candidats = read_public_keys("candidates.txt"); //Clé des candidats
+	
+	CellProtected *tmp = declarations; //tampon pour sumbit vote
+	
+	int i = 1;
+	
+	Key *author_pub = (Key*)malloc(sizeof(Key)); //clé publique de l'auteur
+	Key *author_priv = (Key*)malloc(sizeof(Key)); //clé privée de l'auteur
+	init_pair_keys(author_pub, author_priv, 10, 16); //Création d'une pair de clé pour l'auteur
+	char nom[12]; //nom du fichier
+	
+	Block *b = lire_block("block.txt"); //lecture du block
+	
+	//test3(compute_proof_of_work, b, 0, 5, 1);
+	
+    compute_proof_of_work(b, 4)
+
+	CellTree *tree = create_node(b); //création de l'arbre
+	
+	ecrire_block(b, "uiui.txt"); //écriture du block lue avec le bon nonce
+	
+	while(tmp){
+		if(i%10 == 0){
+			create_block(tree, author_pub, 1); //Creation du block
+			sprintf(nom, "block%d", (i/10)); //creation du nom du block
+			add_block(1, nom); //On ajoute le block
+		}
+		submit_vote(tmp->data); //sumbit du vote
+		i++;
+		tmp = tmp->next;
+	}
+	printf("creations blocks termine\n");
+	delete_tree2(tree);
+	
+	CellTree *arbre = read_tree(); //Lecture de l'arbre
+	print_tree(arbre); //Affichage de l'arbre
+	
+	
+	Key *winner = compute_winner_BT(arbre, candidats, votants, 10, 1010); //Calcul du gagnant
+	
+	char *winner_str = key_to_str(winner);
+	
+	printf("Le gagnant est %s\n", winner_str); //Affichage du gagnant
+	
+	
+	free(author_priv);
+	free(author_pub);
+	free(winner);
+	free(winner_str);
+	delete_tree2(arbre);
+	delete_liste_key(votants); //libération de la mémoire
+    delete_liste_protected(declarations); //libération de la mémoire
+    delete_liste_key(candidats); //libération de la mémoire
+	
+	return 0;
 }

@@ -15,5 +15,6 @@ void afficher_cell_protected(CellProtected *liste);
 void delete_cell_protected(CellProtected *c);
 void delete_liste_protected(CellProtected *c);
 void verification_fraude(CellProtected **liste);
+void fusion(CellProtected **l1, CellProtected **l2);
 
 #endif //PROTECTED_H

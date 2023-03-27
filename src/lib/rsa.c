@@ -1,9 +1,9 @@
 #include "headers/rsa.h"
 
 long modpow_naive(long a, long m, long n){
-    //paramètres: 
-    //
-    //valeur de retour
+    //paramètres: une long a, un long m et un long n
+    //Version naive de modpow et sans optimisation
+    //valeur de retour: renvoie a puissance m modulo n
     long powA = a;
     for(int i=0; i<m; i++){
         powA *= a;
@@ -12,9 +12,9 @@ long modpow_naive(long a, long m, long n){
 }
 
 long modpow(long a, long m, long n){
-    //paramètres: 
-    //
-    //valeur de retour
+    //paramètres: une long a, un long m et un long n
+    //version optimisé de modpow en utilisant un algorithme dichotomique
+    //valeur de retour: renvoie a puissance m modulo n
     long b = 0;
     if(m == 0){
         return 1;
@@ -43,14 +43,14 @@ int witness(long a, long b, long d, long p){ //fonction fourni
     return 1;
 }
 
-long rand_long(long low, long up){ //fonction fourni (je crois)
+long rand_long(long low, long up){ //fonction fourni
     return rand() % (up-low + 1)+low;
 }
 
 int is_prime_naive(long p){
-    //paramètres: 
-    //
-    //valeur de retour
+    //paramètres: une long p
+    //fonction naive qui retrouve si un entier est premier ou non
+    //valeur de retour: 1 si l'entier est premier et 0 sinon
     for(int i=3; i<p; i++){
         if(p%i == 0){
             return 0;
@@ -86,9 +86,8 @@ int is_prime_miller(long p, int k){ //fonction fourni
 }
 
 long random_prime_number(int low_size, int up_size, int k){
-    //paramètres: 
-    //
-    //valeur de retour
+    //paramètres: 3 entiers
+    //valeur de retour: renvoie un entier premeir au hasard
     if (low_size > up_size){
         printf("Probleme de borne : borne inferieure > borne superieure.\nInversion des bornes.\n");
         int temp = low_size;
@@ -117,9 +116,9 @@ long extended_gcd(long s, long t, long *u, long *v){ //fonction fourni
 }
 
 void generate_key_values(long p, long q, long *n, long *s,long *u){
-    //paramètres: 
-    //
-    //valeur de retour
+    //paramètres: 2 long et 3 pointeurs vers des long
+    //initialise une paire de clé (s, n) et (u, n) avec p et q des nombres premiers
+    //valeur de retour: aucune, intilalise les valeurs des pointeurs
     *n = p*q;
     long t = (p-1)*(q-1);
     long v = 0;

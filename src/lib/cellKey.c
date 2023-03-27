@@ -82,3 +82,13 @@ void delete_liste_key(CellKey *c){
     }
     free(c);
 }
+
+int len_cellkey(CellKey *c){
+	int i = 0;
+	CellKey *tmp = c;
+	while(tmp){
+		i++;
+		tmp = tmp->next;
+	}
+	return i;
+}
