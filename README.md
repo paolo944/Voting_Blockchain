@@ -4,5 +4,8 @@ LU2IN006 2022
 
 ## Compilation
 
-- Tapez `make` pour compiler le projet. 
+- Tapez `make` pour compiler le projet.
 - Tapez `make clean` pour supprimer les fichiers binaires et les fichiers de test
+
+## Lancement
+- Tapez `./main`
